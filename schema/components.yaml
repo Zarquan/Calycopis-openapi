@@ -101,11 +101,14 @@ components:
       type: string
       title: LifecyclePhase
       enum:
-            - INACTIVE
+            - INITIAL
+
             - WAITING
             - PREPARING
             - AVAILABLE
+            - RUNNING
             - RELEASING
+
             - COMPLETED
             - FAILED
             - CANCELLED
@@ -645,7 +648,7 @@ components:
       type: string
       title: ExecutionSessionPhase
       enum:
-        - PROPOSED
+        - INITIAL
         - OFFERED
         - ACCEPTED
         - REJECTED
@@ -653,7 +656,7 @@ components:
 
         - WAITING
         - PREPARING
-        - READY
+        - AVAILABLE
         - RUNNING
         - RELEASING
 
