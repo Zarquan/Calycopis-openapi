@@ -95,30 +95,57 @@ components:
             The URL to access this component, assigned by the server.
           type: string
 
-    ScheduledComponent:
+    LifecyclePhase:
       description: >-
-        The execution schedule for this component.
+        Lifecycle phase for components.
+      type: string
+      title: LifecyclePhase
+      enum:
+            - INITIAL
+
+            - WAITING
+            - PREPARING
+            - AVAILABLE
+            - RUNNING
+            - RELEASING
+
+            - COMPLETED
+            - FAILED
+            - CANCELLED
+
+    LifecycleSchedule:
+      description: >-
+        Lifecycle schedule.
       type: object
-      title: ScheduledComponent
+      title: LifecycleSchedule
       properties:
+        preparing:
+          $ref: 'ScheduleDurationInstant'
+        available:
+          # Why do we need an interval here ?
+          $ref: 'ScheduleDurationInterval'
+        releasing:
+          $ref: 'ScheduleDurationInstant'
+
+    LifecycleComponent:
+      description: >-
+        A component with a lifecycle phase.
+      type: object
+      title: LifecycleComponent
+      properties:
+        phase:
+          description: >-
+            The lifecycle phase.
+          xml:
+            name: phase
+          $ref: 'LifecyclePhase'
         schedule:
           description: >-
-            The schedule for this component.
+            The lifecycle schedule.
           xml:
             name: schedule
-          $ref: 'ComponentSchedule'
+          $ref: 'LifecycleSchedule'
 
-#   ComponentSchedule:
-#     description: >-
-#       The schedule elements for a ScheduledComponent.
-#     type: object
-#     title: ComponentSchedule
-#     properties:
-#       offered:
-#         $ref: 'OfferedScheduleBlock'
-#       # Deprecate this
-#       observed:
-#         $ref: 'ObservedScheduleBlock'
 
 # compute-resources.yaml
 
@@ -135,7 +162,11 @@ components:
           "https://www.purl.org/ivoa.net/EB/schema/types/compute/simple-compute-resource-1.0": './types/compute/simple-compute-resource-1.0.yaml#/components/schemas/SimpleComputeResource'
       allOf:
         - $ref: 'AbstractComponent'
-        - $ref: 'ScheduledComponent'
+        - $ref: 'LifecycleComponent'
+        - type: object
+          properties:
+            frog:
+              type: string
 
 # volume-mounts.yaml
 
@@ -188,7 +219,7 @@ components:
           "https://www.purl.org/ivoa.net/EB/schema/types/storage/simple-storage-resource-1.0": './types/storage/simple-storage-resource-1.0.yaml#/components/schemas/SimpleStorageResource'
       allOf:
         - $ref: 'AbstractComponent'
-        - $ref: 'ScheduledComponent'
+        - $ref: 'LifecycleComponent'
         - type: object
           properties:
             data:
@@ -226,7 +257,7 @@ components:
           "https://www.purl.org/ivoa.net/EB/schema/types/data/skao-data-resource-1.0":   './types/data/skao-data-resource-1.0.yaml#/components/schemas/SkaoDataResource'
       allOf:
         - $ref: 'AbstractComponent'
-        - $ref: 'ScheduledComponent'
+        - $ref: 'LifecycleComponent'
         - type: object
           properties:
             storage:
@@ -246,7 +277,7 @@ components:
           "https://www.purl.org/ivoa.net/EB/schema/types/executable/jupyter-notebook-1.0":      './types/executable/jupyter-notebook-1.0.yaml#/components/schemas/JupyterNotebook'
       allOf:
         - $ref: 'AbstractComponent'
-        - $ref: 'ScheduledComponent'
+        - $ref: 'LifecycleComponent'
         - type: object
           properties:
             access:
@@ -269,7 +300,7 @@ components:
         Details of an access method the client can use to monitor and interact with the execution.
         These details are provided by the service based on the description of the executable and how it is implemented.
       type: object
-      title: DockerContainer
+      title: ExecutableAccessMethod
       properties:
         status:
           type: string
@@ -594,50 +625,6 @@ components:
         duration:
           $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
 
-    ComponentSchedule:
-      description: >-
-        Details of the offered timings.
-      type: object
-      title: ComponentSchedule
-      properties:
-        preparing:
-          $ref: 'ScheduleDurationInstant'
-        available:
-          # Why do we need an interval here ?
-          $ref: 'ScheduleDurationInterval'
-        releasing:
-          $ref: 'ScheduleDurationInstant'
-
-#   # TODO Deprecate this
-#   ObservedScheduleItem:
-#     description: >-
-#       Details of the observed timings.
-#     type: object
-#     title: ObservedScheduleItem
-#     properties:
-#       started:
-#         $ref: './components/utils.yaml#/components/schemas/ISO8601Instant'
-#         #type: string
-#         #format: date-time
-#       finished:
-#         $ref: './components/utils.yaml#/components/schemas/ISO8601Instant'
-#         #type: string
-#         #format: date-time
-#
-#   # TODO Deprecate this
-#   ObservedScheduleBlock:
-#     description: >-
-#       Details of the observed timings.
-#     type: object
-#     title: ObservedScheduleBlock
-#     properties:
-#       preparing:
-#         $ref: 'ObservedScheduleItem'
-#       available:
-#         $ref: 'ObservedScheduleItem'
-#       releasing:
-#         $ref: 'ObservedScheduleItem'
-
     ExecutionComponents:
       description: >-
         The combination of an executable and the compute, storage, volumes, and data resources it needs.
@@ -657,11 +644,11 @@ components:
 
     ExecutionSessionPhase:
       description: >-
-        Status code for an execution session.
+        The execution session phase.
       type: string
       title: ExecutionSessionPhase
       enum:
-        - PROPOSED
+        - INITIAL
         - OFFERED
         - ACCEPTED
         - REJECTED
@@ -669,13 +656,27 @@ components:
 
         - WAITING
         - PREPARING
-        - READY
+        - AVAILABLE
         - RUNNING
         - RELEASING
 
         - COMPLETED
         - FAILED
         - CANCELLED
+
+    ExecutionSessionSchedule:
+      description: >-
+        Execution session schedule.
+      type: object
+      title: ExecutionSessionSchedule
+      properties:
+        preparing:
+          $ref: 'ScheduleDurationInstant'
+        available:
+          # Why do we need an interval here ?
+          $ref: 'ScheduleDurationInterval'
+        releasing:
+          $ref: 'ScheduleDurationInstant'
 
     ExecutionSessionResponse:
       description: >-
@@ -687,7 +688,6 @@ components:
       allOf:
         - $ref: 'AbstractComponent'
         - $ref: 'AccessibleComponent'
-        - $ref: 'ScheduledComponent'
         - $ref: 'ExecutionComponents'
         - type: object
           required:
@@ -698,6 +698,8 @@ components:
           properties:
             phase:
               $ref: 'ExecutionSessionPhase'
+            schedule:
+              $ref: 'ExecutionSessionSchedule'
             expires:
               description: >-
                 The date and time that this execution offer expires.
@@ -706,16 +708,9 @@ components:
                 name: expires
               type: string
               format: date-time
-#           executable:
-#             xml:
-#               name: executable
-#             $ref: 'AbstractExecutable'
-#           resources:
-#             xml:
-#               name: resources
-#             $ref: 'ExecutionResourceList'
             options:
               description: >-
+                TODO Move this to component.
                 A List of options the client can apply to this Execution.
               type: array
               items:
