@@ -41,13 +41,13 @@ components:
 
 # components.yaml
 
-    AbstractComponent:
+    ComponentMetadata:
       description: >-
-        Abstract base class for all our components.
-        This class provides a name, a UUID identifier, a href URL,
-        and a list of messages.
+        A metadata block for our components.
+        This includes a name, a UUID identifier, a URL, and a list of messages.
+        These properties will change depending on the service that is hosting the component.
       type: object
-      title: AbstractComponent
+      title: ComponentMetadata
       properties:
         uuid:
           description: >-
@@ -58,12 +58,16 @@ components:
           description: >-
             A human readable name, assigned by the client.
           type: string
-        type:
+        kind:
           description: >-
             The component type identifier.
           type: string
           xml:
             attribute: true
+        url:
+          description: >-
+            The URL to access this component.
+          type: string
         description:
           description: >-
             A human readable description.
@@ -71,6 +75,11 @@ components:
         created:
           description: >-
             The date and time the component was created.
+          type: string
+          format: date-time
+        modified:
+          description: >-
+            The date and time the component was last modified.
           type: string
           format: date-time
         messages:
@@ -84,16 +93,14 @@ components:
             xml:
               name: message
 
-    AccessibleComponent:
+    AbstractComponent:
       description: >-
-        Adds a href to access this component.
+        Abstract base class for all our components.
       type: object
-      title: AccessibleComponent
+      title: AbstractComponent
       properties:
-        href:
-          description: >-
-            The URL to access this component, assigned by the server.
-          type: string
+        meta:
+          $ref: 'ComponentMetadata'
 
     LifecyclePhase:
       description: >-
@@ -157,7 +164,7 @@ components:
       required:
         - type
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
           "https://www.purl.org/ivoa.net/EB/schema/types/compute/simple-compute-resource-1.0": './types/compute/simple-compute-resource-1.0.yaml#/components/schemas/SimpleComputeResource'
       allOf:
@@ -188,7 +195,7 @@ components:
       required:
         - type
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
           "https://www.purl.org/ivoa.net/EB/schema/types/volume/simple-volume-mount-1.0": './types/volume/simple-volume-mount-1.0.yaml#/components/schemas/SimpleVolumeMount'
       allOf:
@@ -212,9 +219,9 @@ components:
       type: object
       title: AbstractStorageResource
       required:
-        - type
+        - kind
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
           "https://www.purl.org/ivoa.net/EB/schema/types/storage/simple-storage-resource-1.0": './types/storage/simple-storage-resource-1.0.yaml#/components/schemas/SimpleStorageResource'
       allOf:
@@ -246,9 +253,9 @@ components:
       type: object
       title: AbstractDataResource
       required:
-        - type
+        - kind
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
           "https://www.purl.org/ivoa.net/EB/schema/types/data/simple-data-resource-1.0": './types/data/simple-data-resource-1.0.yaml#/components/schemas/SimpleDataResource'
           "https://www.purl.org/ivoa.net/EB/schema/types/data/S3-data-resource-1.0":     './types/data/S3-data-resource-1.0.yaml#/components/schemas/S3DataResource'
@@ -268,9 +275,9 @@ components:
       type: object
       title: AbstractExecutable
       required:
-        - type
+        - kind
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
           "https://www.purl.org/ivoa.net/EB/schema/types/executable/docker-container-1.0":      './types/executable/docker-container-1.0.yaml#/components/schemas/DockerContainer'
           "https://www.purl.org/ivoa.net/EB/schema/types/executable/singularity-container-1.0": './types/executable/singularity-container-1.0.yaml#/components/schemas/SingularityContainer'
@@ -289,10 +296,10 @@ components:
       type: object
       title: AbstractOption
       required:
-        - type
+        - kind
         - path
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
           "uri:string-value-option":  '#/components/schemas/StringValueOption'
           "uri:enum-value-option":    '#/components/schemas/EnumValueOption'
@@ -409,10 +416,10 @@ components:
       type: object
       title: AbstractUpdate
       required:
-        - type
+        - kind
         - path
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
           "uri:string-value-update":  '#/components/schemas/StringValueUpdate'
           "uri:enum-value-update":    '#/components/schemas/EnumValueUpdate'
@@ -644,14 +651,13 @@ components:
         name: execution
       allOf:
         - $ref: 'AbstractComponent'
-        - $ref: 'AccessibleComponent'
         - $ref: 'ExecutionComponents'
         - type: object
           required:
             - uuid
+            - kind
             - state
             - href
-            - type
           properties:
             phase:
               $ref: 'ExecutionSessionPhase'
@@ -763,7 +769,6 @@ components:
         name: offers-response
       allOf:
         - $ref: 'AbstractComponent'
-        - $ref: 'AccessibleComponent'
         - type: object
           properties:
             result:
