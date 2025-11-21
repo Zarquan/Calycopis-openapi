@@ -44,8 +44,7 @@ components:
     ComponentMetadata:
       description: >-
         A metadata block for our components.
-        This includes a name, a UUID identifier, a URL, and a list of messages.
-        These properties will change depending on the service that is hosting the component.
+        This includes a name, a UUID identifier, a URL, and lists of the messages and options.
       type: object
       title: ComponentMetadata
       properties:
@@ -58,12 +57,6 @@ components:
           description: >-
             A human readable name, assigned by the client.
           type: string
-        kind:
-          description: >-
-            The component type identifier.
-          type: string
-          xml:
-            attribute: true
         url:
           description: >-
             The URL to access this component.
@@ -85,13 +78,21 @@ components:
         messages:
           description: >-
             A list of messages about this component.
+          type: array
           xml:
             name: messages
-          type: array
           items:
             $ref: './components/messages.yaml#/components/schemas/MessageItem'
             xml:
               name: message
+        options:
+          description: >-
+            A List of options the client can apply to this component.
+          type: array
+          xml:
+            name: options
+          items:
+            $ref: 'AbstractOption'
 
     AbstractComponent:
       description: >-
@@ -99,12 +100,20 @@ components:
       type: object
       title: AbstractComponent
       properties:
+        kind:
+          description: >-
+            The component type identifier.
+          type: string
+          xml:
+            attribute: true
         meta:
+          description: >-
+            The component metadata.
           $ref: 'ComponentMetadata'
 
     LifecyclePhase:
       description: >-
-        Lifecycle phase for components.
+        Lifecycle phase values.
       type: string
       title: LifecyclePhase
       enum:
@@ -127,16 +136,15 @@ components:
       title: LifecycleSchedule
       properties:
         preparing:
-          $ref: 'ScheduleDurationInstant'
+          $ref: 'ScheduleStartDurationInstant'
         available:
-          # Why do we need an interval here ?
-          $ref: 'ScheduleDurationInterval'
+          $ref: 'ScheduleStartDurationInterval'
         releasing:
-          $ref: 'ScheduleDurationInstant'
+          $ref: 'ScheduleStartDurationInstant'
 
     LifecycleComponent:
       description: >-
-        A component with a lifecycle phase.
+        A component with a lifecycle.
       type: object
       title: LifecycleComponent
       properties:
@@ -153,7 +161,6 @@ components:
             name: schedule
           $ref: 'LifecycleSchedule'
 
-
 # compute-resources.yaml
 
     AbstractComputeResource:
@@ -162,7 +169,7 @@ components:
       type: object
       title: AbstractComputeResource
       required:
-        - type
+        - kind
       discriminator:
         propertyName: kind
         mapping:
@@ -193,7 +200,7 @@ components:
       type: object
       title: AbstractVolumeMount
       required:
-        - type
+        - kind
       discriminator:
         propertyName: kind
         mapping:
@@ -306,13 +313,15 @@ components:
           "uri:integer-value-option": '#/components/schemas/IntegerValueOption'
           "uri:integer-delta-option": '#/components/schemas/IntegerDeltaOption'
       properties:
-        type:
+        kind:
+          description: >-
+            The kind of option.
           type: string
           xml:
             attribute: true
         path:
           description: >-
-            The target path that the option applies to.
+            The path this option applies to.
           type: string
           xml:
             attribute: false
@@ -426,13 +435,15 @@ components:
           "uri:integer-value-update": '#/components/schemas/IntegerValueUpdate'
           "uri:integer-delta-update": '#/components/schemas/IntegerDeltaUpdate'
       properties:
-        type:
+        kind:
+          description: >-
+            The kind of update.
           type: string
           xml:
             attribute: true
         path:
           description: >-
-            The target path that the update applies to.
+            The path this update applies to.
           type: string
           xml:
             attribute: false
@@ -545,7 +556,7 @@ components:
 
     RequestedScheduleItem:
       description: >-
-        Details of the requested timings.
+        The requested schedule.
       type: object
       title: RequestedScheduleItem
       properties:
@@ -555,36 +566,56 @@ components:
           $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
         start:
           description: >-
-            The requested start time.
+            The requested start interval.
           $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
 
     RequestedScheduleBlock:
       description: >-
-        Details of the requested timings.
+        The requested schedule.
       type: object
       title: RequestedScheduleBlock
       properties:
         requested:
           $ref: 'RequestedScheduleItem'
 
-    ScheduleDurationInstant:
+    ScheduleDuration:
       description: >-
-        Details of a schedule instant and duration.
+        A duration.
       type: object
-      title: ScheduleDurationInstant
+      title: ScheduleDuration
+      properties:
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduleStartDurationInstant:
+      description: >-
+        An instant and a duration.
+      type: object
+      title: ScheduleStartDurationInstant
       properties:
         start:
           $ref: './components/utils.yaml#/components/schemas/ISO8601Instant'
         duration:
           $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
 
-    ScheduleDurationInterval:
+    ScheduleStartDurationInterval:
       description: >-
-        Details of a schedule interval and duration.
+        An interval and a duration.
       type: object
-      title: ScheduleDurationInterval
+      title: ScheduleStartDurationInterval
       properties:
         start:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduleDoneDurationInstant:
+      description: >-
+        An interval and a duration.
+      type: object
+      title: ScheduleStartDurationInterval
+      properties:
+        done:
           $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
         duration:
           $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
@@ -608,7 +639,7 @@ components:
 
     ExecutionSessionPhase:
       description: >-
-        The execution session phase.
+        The Execution Session phase.
       type: string
       title: ExecutionSessionPhase
       enum:
@@ -630,21 +661,20 @@ components:
 
     ExecutionSessionSchedule:
       description: >-
-        Execution session schedule.
+        An Execution Session schedule.
       type: object
       title: ExecutionSessionSchedule
       properties:
         preparing:
-          $ref: 'ScheduleDurationInstant'
+          $ref: 'ScheduleStartDurationInstant'
         available:
-          # Why do we need an interval here ?
-          $ref: 'ScheduleDurationInterval'
+          $ref: 'ScheduleStartDurationInterval'
         releasing:
-          $ref: 'ScheduleDurationInstant'
+          $ref: 'ScheduleStartDurationInstant'
 
     ExecutionSessionResponse:
       description: >-
-        An Execution session, including uuid, href, and status.
+        An Execution Session.
       type: object
       title: ExecutionSessionResponse
       xml:
@@ -653,11 +683,6 @@ components:
         - $ref: 'AbstractComponent'
         - $ref: 'ExecutionComponents'
         - type: object
-          required:
-            - uuid
-            - kind
-            - state
-            - href
           properties:
             phase:
               $ref: 'ExecutionSessionPhase'
@@ -665,19 +690,12 @@ components:
               $ref: 'ExecutionSessionSchedule'
             expires:
               description: >-
-                The date and time that this execution offer expires.
+                The date and time when this offer expires.
                 Only valid while the state is OFFERED.
               xml:
                 name: expires
               type: string
               format: date-time
-            options:
-              description: >-
-                TODO Move this to component.
-                A List of options the client can apply to this Execution.
-              type: array
-              items:
-                $ref: 'AbstractOption'
             connectors:
               description: >-
                 A list of access connectors to interact with the session.
@@ -743,14 +761,6 @@ components:
               description: >-
                 A human readable description.
               type: string
-#       executable:
-#         xml:
-#           name: executable
-#         $ref: 'AbstractExecutable'
-#       resources:
-#         xml:
-#           name: resources
-#         $ref: 'ExecutionResourceList'
             schedule:
               xml:
                 name: schedule
@@ -762,9 +772,6 @@ components:
         including a uuid, href, and an expiry date for the set.
       type: object
       title: OfferSetResponse
-      required:
-        - uuid
-        - href
       xml:
         name: offers-response
       allOf:
