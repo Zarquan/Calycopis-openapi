@@ -67,7 +67,7 @@ paths:
                 format: url
         "200":
           description: >-
-            A simple OK response with the same contant as the '/offersets/{uuid}' endpoint.
+            A simple OK response with the offerset details.
           content:
             application/json:
               schema:
@@ -95,7 +95,7 @@ paths:
       responses:
         "200":
           description: >-
-            Required description ...
+            The set of responses for each content type.
           content:
             application/json:
               schema:
@@ -123,17 +123,17 @@ paths:
       responses:
         "200":
           description: >-
-            Required description ...
+            The set of responses for each content type.
           content:
             application/json:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseFour'
             application/xml:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseFour'
             application/yaml:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseFour'
 
     post:
       operationId: ExecutionSessionPost
@@ -152,13 +152,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml#/components/schemas/UpdateRequest'
+              $ref: './components.yaml#/components/schemas/AbstractUpdate'
           application/xml:
             schema:
-              $ref: './components.yaml#/components/schemas/UpdateRequest'
+              $ref: './components.yaml#/components/schemas/AbstractUpdate'
           application/yaml:
             schema:
-              $ref: './components.yaml#/components/schemas/UpdateRequest'
+              $ref: './components.yaml#/components/schemas/AbstractUpdate'
       # TODO Errors return error codes and ErrorResponse.
       responses:
         "200":
@@ -167,12 +167,47 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseFour'
             application/xml:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseFour'
             application/yaml:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseFour'
 
+components:
+  schemas:
+
+#   ExecutionSessionResponseOne:
+#     description: >-
+#       Container class for execution session responses.
+#     type: object
+#     title: ExecutionSessionResponseOne
+#     $ref: './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
+
+#   ExecutionSessionResponseTwo:
+#     description: >-
+#       Container class for execution session responses.
+#     type: object
+#     title: ExecutionSessionResponseTwo
+#     allOf:
+#       - $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
+
+#   ExecutionSessionResponseThree:
+#     description: >-
+#       Container class for execution session responses.
+#     type: object
+#     title: ExecutionSessionResponseThree
+#     oneOf:
+#      - $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
+#      - $ref: './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
+
+    ExecutionSessionResponseFour:
+      description: >-
+        Container class for ExecutionSession responses.
+      type: object
+      title: ExecutionSessionResponseFour
+      oneOf:
+       - $ref: './components.yaml#/components/schemas/SimpleExecutionSession'
+       - $ref: './components.yaml#/components/schemas/ScheduledExecutionSession'
 

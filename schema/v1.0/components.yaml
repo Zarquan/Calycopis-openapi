@@ -41,13 +41,12 @@ components:
 
 # components.yaml
 
-    AbstractComponent:
+    ComponentMetadata:
       description: >-
-        Abstract base class for all our components.
-        This class provides a name, a UUID identifier, a href URL,
-        and a list of messages.
+        A metadata block for our components.
+        This includes a name, a UUID identifier, a URL, and lists of the messages and options.
       type: object
-      title: AbstractComponent
+      title: ComponentMetadata
       properties:
         uuid:
           description: >-
@@ -58,12 +57,11 @@ components:
           description: >-
             A human readable name, assigned by the client.
           type: string
-        type:
+        url:
           description: >-
-            The component type identifier.
+            The URL to access this component.
           type: string
-          xml:
-            attribute: true
+          format: uri
         description:
           description: >-
             A human readable description.
@@ -73,31 +71,51 @@ components:
             The date and time the component was created.
           type: string
           format: date-time
+        modified:
+          description: >-
+            The date and time the component was last modified.
+          type: string
+          format: date-time
         messages:
           description: >-
             A list of messages about this component.
+          type: array
           xml:
             name: messages
-          type: array
           items:
             $ref: './components/messages.yaml#/components/schemas/MessageItem'
             xml:
               name: message
-
-    AccessibleComponent:
-      description: >-
-        Adds a href to access this component.
-      type: object
-      title: AccessibleComponent
-      properties:
-        href:
+        options:
           description: >-
-            The URL to access this component, assigned by the server.
+            A List of options the client can apply to this component.
+          type: array
+          xml:
+            name: options
+          items:
+            $ref: 'AbstractOption'
+
+    AbstractComponent:
+      description: >-
+        Abstract base class for all our components.
+      type: object
+      title: AbstractComponent
+      properties:
+        kind:
+          description: >-
+            The component type identifier.
           type: string
+          format: uri
+          xml:
+            attribute: true
+        meta:
+          description: >-
+            The component metadata.
+          $ref: 'ComponentMetadata'
 
     LifecyclePhase:
       description: >-
-        Lifecycle phase for components.
+        Lifecycle phase values.
       type: string
       title: LifecyclePhase
       enum:
@@ -113,6 +131,48 @@ components:
             - FAILED
             - CANCELLED
 
+    LifecycleDuration:
+      description: >-
+        A lifecycle duration.
+      type: object
+      title: LifecycleDuration
+      properties:
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    LifecycleStartDurationInstant:
+      description: >-
+        A lifecycle instant and duration.
+      type: object
+      title: LifecycleStartDurationInstant
+      properties:
+        start:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Instant'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    LifecycleStartDurationInterval:
+      description: >-
+        A lifecycle interval and duration.
+      type: object
+      title: LifecycleStartDurationInterval
+      properties:
+        start:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    LifecycleDoneDurationInterval:
+      description: >-
+        A lifecycle interval and duration.
+      type: object
+      title: LifecycleDoneDurationInterval
+      properties:
+        done:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
     LifecycleSchedule:
       description: >-
         Lifecycle schedule.
@@ -120,16 +180,15 @@ components:
       title: LifecycleSchedule
       properties:
         preparing:
-          $ref: 'ScheduleDurationInstant'
+          $ref: 'LifecycleStartDurationInstant'
         available:
-          # Why do we need an interval here ?
-          $ref: 'ScheduleDurationInterval'
+          $ref: 'LifecycleStartDurationInterval'
         releasing:
-          $ref: 'ScheduleDurationInstant'
+          $ref: 'LifecycleStartDurationInstant'
 
     LifecycleComponent:
       description: >-
-        A component with a lifecycle phase.
+        A component with a lifecycle.
       type: object
       title: LifecycleComponent
       properties:
@@ -146,8 +205,7 @@ components:
             name: schedule
           $ref: 'LifecycleSchedule'
 
-
-# compute-resources.yaml
+# abstract-compute-resource.yaml
 
     AbstractComputeResource:
       description: >-
@@ -155,30 +213,16 @@ components:
       type: object
       title: AbstractComputeResource
       required:
-        - type
+        - kind
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/types/compute/simple-compute-resource-1.0": './types/compute/simple-compute-resource-1.0.yaml#/components/schemas/SimpleComputeResource'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/compute/simple-compute-resource-1.0": './types/compute/simple-compute-resource-1.0.yaml#/components/schemas/SimpleComputeResource'
       allOf:
         - $ref: 'AbstractComponent'
         - $ref: 'LifecycleComponent'
-        - type: object
-          properties:
-            frog:
-              type: string
 
-# volume-mounts.yaml
-
-    VolumeMountList:
-      description: >-
-        A list of volume mounts.
-      type: array
-      title: VolumeMountList
-      xml:
-        name: storage
-      items:
-        $ref: 'AbstractVolumeMount'
+# abstract-volume-mount.yaml
 
     AbstractVolumeMount:
       description: >-
@@ -186,25 +230,25 @@ components:
       type: object
       title: AbstractVolumeMount
       required:
-        - type
+        - kind
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/types/volume/simple-volume-mount-1.0": './types/volume/simple-volume-mount-1.0.yaml#/components/schemas/SimpleVolumeMount'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/volume/simple-volume-mount-1.0": './types/volume/simple-volume-mount-1.0.yaml#/components/schemas/SimpleVolumeMount'
       allOf:
         - $ref: 'AbstractComponent'
 
-# storage-resources.yaml
-
-    StorageResourceList:
+    AbstractVolumeMountList:
       description: >-
-        A list of storage resources.
+        A list of abstract volume mounts.
       type: array
-      title: StorageResourceList
-#     xml:
-#       name: storage
+      title: AbstractVolumeMountList
+      xml:
+        name: volumes
       items:
-        $ref: 'AbstractStorageResource'
+        $ref: 'AbstractVolumeMount'
+
+# abstract-storage-resources.yaml
 
     AbstractStorageResource:
       description: >-
@@ -212,11 +256,11 @@ components:
       type: object
       title: AbstractStorageResource
       required:
-        - type
+        - kind
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/types/storage/simple-storage-resource-1.0": './types/storage/simple-storage-resource-1.0.yaml#/components/schemas/SimpleStorageResource'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/storage/simple-storage-resource-1.0": './types/storage/simple-storage-resource-1.0.yaml#/components/schemas/SimpleStorageResource'
       allOf:
         - $ref: 'AbstractComponent'
         - $ref: 'LifecycleComponent'
@@ -227,18 +271,17 @@ components:
               items:
                 type: string
 
-
-# data-resources.yaml
-
-    DataResourceList:
+    AbstractStorageResourceList:
       description: >-
-        A list of data resources.
+        A list of abstract storage resources.
       type: array
-      title: DataResourceList
+      title: AbstractStorageResourceList
       xml:
         name: storage
       items:
-        $ref: 'AbstractDataResource'
+        $ref: 'AbstractStorageResource'
+
+# abstract-data-resource.yaml
 
     AbstractDataResource:
       description: >-
@@ -246,15 +289,15 @@ components:
       type: object
       title: AbstractDataResource
       required:
-        - type
+        - kind
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/types/data/simple-data-resource-1.0": './types/data/simple-data-resource-1.0.yaml#/components/schemas/SimpleDataResource'
-          "https://www.purl.org/ivoa.net/EB/schema/types/data/S3-data-resource-1.0":     './types/data/S3-data-resource-1.0.yaml#/components/schemas/S3DataResource'
-          "https://www.purl.org/ivoa.net/EB/schema/types/data/rucio-data-resource-1.0":  './types/data/rucio-data-resource-1.0.yaml#/components/schemas/RucioDataResource'
-          "https://www.purl.org/ivoa.net/EB/schema/types/data/ivoa-data-resource-1.0":   './types/data/ivoa-data-resource-1.0.yaml#/components/schemas/IvoaDataResource'
-          "https://www.purl.org/ivoa.net/EB/schema/types/data/skao-data-resource-1.0":   './types/data/skao-data-resource-1.0.yaml#/components/schemas/SkaoDataResource'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/simple-data-resource-1.0": './types/data/simple-data-resource-1.0.yaml#/components/schemas/SimpleDataResource'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/S3-data-resource-1.0":     './types/data/S3-data-resource-1.0.yaml#/components/schemas/S3DataResource'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/rucio-data-resource-1.0":  './types/data/rucio-data-resource-1.0.yaml#/components/schemas/RucioDataResource'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/ivoa-data-resource-1.0":   './types/data/ivoa-data-resource-1.0.yaml#/components/schemas/IvoaDataResource'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/skao-data-resource-1.0":   './types/data/skao-data-resource-1.0.yaml#/components/schemas/SkaoDataResource'
       allOf:
         - $ref: 'AbstractComponent'
         - $ref: 'LifecycleComponent'
@@ -263,22 +306,33 @@ components:
             storage:
               type: string
 
+    AbstractDataResourceList:
+      description: >-
+        A list of abstract data resources.
+      type: array
+      title: AbstractDataResourceList
+      xml:
+        name: data
+      items:
+        $ref: 'AbstractDataResource'
+
+# abstract-executable.yaml
+
     AbstractExecutable:
       description: Abstract base class for executables.
       type: object
       title: AbstractExecutable
       required:
-        - type
+        - kind
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/types/executable/docker-container-1.0":      './types/executable/docker-container-1.0.yaml#/components/schemas/DockerContainer'
-          "https://www.purl.org/ivoa.net/EB/schema/types/executable/singularity-container-1.0": './types/executable/singularity-container-1.0.yaml#/components/schemas/SingularityContainer'
-          "https://www.purl.org/ivoa.net/EB/schema/types/executable/jupyter-notebook-1.0":      './types/executable/jupyter-notebook-1.0.yaml#/components/schemas/JupyterNotebook'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/executable/docker-container-1.0":      './types/executable/docker-container-1.0.yaml#/components/schemas/DockerContainer'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/executable/singularity-container-1.0": './types/executable/singularity-container-1.0.yaml#/components/schemas/SingularityContainer'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/executable/jupyter-notebook-1.0":      './types/executable/jupyter-notebook-1.0.yaml#/components/schemas/JupyterNotebook'
       allOf:
         - $ref: 'AbstractComponent'
         - $ref: 'LifecycleComponent'
-        - type: object
 
 # update-options.yaml
 
@@ -289,23 +343,25 @@ components:
       type: object
       title: AbstractOption
       required:
-        - type
+        - kind
         - path
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
           "uri:string-value-option":  '#/components/schemas/StringValueOption'
           "uri:enum-value-option":    '#/components/schemas/EnumValueOption'
           "uri:integer-value-option": '#/components/schemas/IntegerValueOption'
           "uri:integer-delta-option": '#/components/schemas/IntegerDeltaOption'
       properties:
-        type:
+        kind:
+          description: >-
+            The kind of option.
           type: string
           xml:
             attribute: true
         path:
           description: >-
-            The target path that the option applies to.
+            The path this option applies to.
           type: string
           xml:
             attribute: false
@@ -409,23 +465,25 @@ components:
       type: object
       title: AbstractUpdate
       required:
-        - type
+        - kind
         - path
       discriminator:
-        propertyName: type
+        propertyName: kind
         mapping:
           "uri:string-value-update":  '#/components/schemas/StringValueUpdate'
           "uri:enum-value-update":    '#/components/schemas/EnumValueUpdate'
           "uri:integer-value-update": '#/components/schemas/IntegerValueUpdate'
           "uri:integer-delta-update": '#/components/schemas/IntegerDeltaUpdate'
       properties:
-        type:
+        kind:
+          description: >-
+            The kind of update.
           type: string
           xml:
             attribute: true
         path:
           description: >-
-            The target path that the update applies to.
+            The path this update applies to.
           type: string
           xml:
             attribute: false
@@ -522,88 +580,47 @@ components:
         max:
           type: string
 
-    # TODO This should be is-a AbstractUpdate rather than has-a AbstractUpdate
-    UpdateRequest:
-      description: >-
-        A request to update an execution.
-      type: object
-      title: UpdateRequest
-      xml:
-        name: update-request
-      properties:
-        update:
-          xml:
-            name: update
-          $ref: 'AbstractUpdate'
+# abstract-session.yaml
 
-    RequestedScheduleItem:
+    AbstractExecutionSession:
       description: >-
-        Details of the requested timings.
+        Abstract base class for execution sessions.
       type: object
-      title: RequestedScheduleItem
-      properties:
-        duration:
-          description: >-
-            The requested duration.
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
-        start:
-          description: >-
-            The requested start time.
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+      title: AbstractExecutionSession
+      required:
+        - kind
+      discriminator:
+        propertyName: kind
+        mapping:
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/simple-execution-session-1.0":    'SimpleExecutionSession'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/scheduled-execution-session-1.0": 'ScheduledExecutionSession'
+         #"https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/simple-execution-session-1.0":    './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
+         #"https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/scheduled-execution-session-1.0": './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
+      allOf:
+        - $ref: 'AbstractComponent'
 
-    RequestedScheduleBlock:
-      description: >-
-        Details of the requested timings.
-      type: object
-      title: RequestedScheduleBlock
-      properties:
-        requested:
-          $ref: 'RequestedScheduleItem'
-
-    ScheduleDurationInstant:
-      description: >-
-        Details of a schedule instant and duration.
-      type: object
-      title: ScheduleDurationInstant
-      properties:
-        start:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Instant'
-        duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
-
-    ScheduleDurationInterval:
-      description: >-
-        Details of a schedule interval and duration.
-      type: object
-      title: ScheduleDurationInterval
-      properties:
-        start:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
-        duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
-
-    ExecutionComponents:
+    SimpleExecutionComponents:
       description: >-
         The combination of an executable and the compute, storage, volumes, and data resources it needs.
       type: object
-      title: ExecutionComponents
+      title: SimpleExecutionComponents
       properties:
         executable:
           $ref: 'AbstractExecutable'
         compute:
           $ref: 'AbstractComputeResource'
         storage:
-          $ref: 'StorageResourceList'
+          $ref: 'AbstractStorageResourceList'
         volumes:
-          $ref: 'VolumeMountList'
+          $ref: 'AbstractVolumeMountList'
         data:
-          $ref: 'DataResourceList'
+          $ref: 'AbstractDataResourceList'
 
-    ExecutionSessionPhase:
+    SimpleExecutionSessionPhase:
       description: >-
-        The execution session phase.
+        The Execution Session phase.
       type: string
-      title: ExecutionSessionPhase
+      title: SimpleExecutionSessionPhase
       enum:
         - INITIAL
         - OFFERED
@@ -621,79 +638,15 @@ components:
         - FAILED
         - CANCELLED
 
-    ExecutionSessionSchedule:
-      description: >-
-        Execution session schedule.
-      type: object
-      title: ExecutionSessionSchedule
-      properties:
-        preparing:
-          $ref: 'ScheduleDurationInstant'
-        available:
-          # Why do we need an interval here ?
-          $ref: 'ScheduleDurationInterval'
-        releasing:
-          $ref: 'ScheduleDurationInstant'
-
-    ExecutionSessionResponse:
-      description: >-
-        An Execution session, including uuid, href, and status.
-      type: object
-      title: ExecutionSessionResponse
-      xml:
-        name: execution
-      allOf:
-        - $ref: 'AbstractComponent'
-        - $ref: 'AccessibleComponent'
-        - $ref: 'ExecutionComponents'
-        - type: object
-          required:
-            - uuid
-            - state
-            - href
-            - type
-          properties:
-            phase:
-              $ref: 'ExecutionSessionPhase'
-            schedule:
-              $ref: 'ExecutionSessionSchedule'
-            expires:
-              description: >-
-                The date and time that this execution offer expires.
-                Only valid while the state is OFFERED.
-              xml:
-                name: expires
-              type: string
-              format: date-time
-            options:
-              description: >-
-                TODO Move this to component.
-                A List of options the client can apply to this Execution.
-              type: array
-              items:
-                $ref: 'AbstractOption'
-            connectors:
-              description: >-
-                A list of access connectors to interact with the session.
-              $ref: 'AccessConnectorList'
-
-    AccessConnectorList:
-      description: >-
-        A list of access endpoints.
-      type: array
-      title: AccessConnectorList
-      xml:
-        name: connector
-      items:
-        $ref: 'AccessConnector'
-
-    AccessConnector:
+    # TODO Expand this with an abstract base class and kind discriminator.
+    # TODO Add nems, descriptions and logos to the derived classes.
+    SimpleSessionConnector:
       description: |
-        An access connector to interact with the session.
+        A connector to interact with the session.
       type: object
-      title: AccessConnector
+      title: SimpleSessionConnector
       properties:
-        type:
+        kind:
           type: string
           description: >-
             A URI to identify the type of connector.
@@ -715,8 +668,159 @@ components:
           description: >-
             The access connector URL.
 
+    SimpleSessionConnectorList:
+      description: >-
+        A list of connection endpoints.
+      type: array
+      title: SimpleSessionConnectorList
+      xml:
+        name: connector
+      items:
+        $ref: 'SimpleSessionConnector'
+
+    SimpleExecutionSession:
+      description: >-
+        A simple execution session.
+      type: object
+      title: SimpleExecutionSession
+      xml:
+        name: execution
+      allOf:
+        - $ref: 'AbstractExecutionSession'
+        - type: object
+          properties:
+            phase:
+              $ref: 'SimpleExecutionSessionPhase'
+            expires:
+              description: >-
+                The date and time when this offer expires.
+                Only valid while the state is OFFERED.
+              xml:
+                name: expires
+              type: string
+              format: date-time
+        - $ref: 'SimpleExecutionComponents'
+        - type: object
+          properties:
+            connectors:
+              description: >-
+                A list of connectors to interact with the session.
+              $ref: 'SimpleSessionConnectorList'
+    ScheduleDuration:
+      type: object
+      name:  ScheduleDuration
+      title: ScheduleDuration
+      description: >-
+        A schedule duration.
+      properties:
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduleStartDurationInstant:
+      type: object
+      name:  ScheduleStartDurationInstant
+      title: ScheduleStartDurationInstant
+      description: >-
+        A schedule instant and duration.
+      properties:
+        start:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Instant'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduleStartDurationInterval:
+      type: object
+      name:  ScheduleStartDurationInterval
+      title: ScheduleStartDurationInterval
+      description: >-
+        A schedule interval and duration.
+      properties:
+        start:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduleDoneDurationInterval:
+      type: object
+      name:  ScheduleDoneDurationInterval
+      title: ScheduleDoneDurationInterval
+      description: >-
+        A schedule interval and duration.
+      properties:
+        done:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduledExecutionSchedule:
+      type: object
+      name:  ScheduledExecutionSchedule
+      title: ScheduledExecutionSchedule
+      description: >-
+        An Execution Session schedule.
+      properties:
+        preparing:
+          $ref: 'ScheduleStartDurationInstant'
+        available:
+          $ref: 'ScheduleStartDurationInterval'
+        releasing:
+          $ref: 'ScheduleStartDurationInstant'
+
+    ScheduledExecutionSession:
+      type: object
+      name:  ScheduledExecutionSession
+      title: ScheduledExecutionSession
+      description: >-
+        A scheduled execution session.
+      allOf:
+        - $ref: 'SimpleExecutionSession'
+        - type: object
+          properties:
+            schedule:
+              $ref: 'ScheduledExecutionSchedule'
 
 # offersets.yaml
+
+    RequestedScheduleItem:
+      description: >-
+        The requested schedule.
+      type: object
+      title: RequestedScheduleItem
+      properties:
+        duration:
+          description: >-
+            The requested duration.
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+        start:
+          description: >-
+            The requested start interval.
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+
+    RequestedScheduleBlock:
+      description: >-
+        The requested schedule.
+      type: object
+      title: RequestedScheduleBlock
+      properties:
+        requested:
+          $ref: 'RequestedScheduleItem'
+
+    ExecutionRequestComponents:
+      description: >-
+        The combination of an executable and the compute, storage, volumes, and data resources it needs.
+      type: object
+      title: ExecutionComponents
+      properties:
+        executable:
+          $ref: 'AbstractExecutable'
+        compute:
+          $ref: 'AbstractComputeResource'
+        storage:
+          $ref: 'AbstractStorageResourceList'
+        volumes:
+          $ref: 'AbstractVolumeMountList'
+        data:
+          $ref: 'AbstractDataResourceList'
 
     OfferSetRequest:
       description: >-
@@ -726,25 +830,10 @@ components:
       xml:
         name: offers-request
       allOf:
-        - $ref: 'ExecutionComponents'
+        - $ref: 'ExecutionRequestComponents'
+       #- $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionComponents'
         - type: object
           properties:
-            name:
-              description: >-
-                A human readable name.
-              type: string
-            description:
-              description: >-
-                A human readable description.
-              type: string
-#       executable:
-#         xml:
-#           name: executable
-#         $ref: 'AbstractExecutable'
-#       resources:
-#         xml:
-#           name: resources
-#         $ref: 'ExecutionResourceList'
             schedule:
               xml:
                 name: schedule
@@ -756,14 +845,10 @@ components:
         including a uuid, href, and an expiry date for the set.
       type: object
       title: OfferSetResponse
-      required:
-        - uuid
-        - href
       xml:
         name: offers-response
       allOf:
         - $ref: 'AbstractComponent'
-        - $ref: 'AccessibleComponent'
         - type: object
           properties:
             result:
@@ -787,7 +872,7 @@ components:
                 name: offers
                 wrapped: true
               items:
-                $ref: 'ExecutionSessionResponse'
+                $ref: 'AbstractExecutionSession'
                 xml:
                   name: execution
 

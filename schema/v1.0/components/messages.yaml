@@ -48,7 +48,7 @@ components:
       xml:
         name: message
       properties:
-        type:
+        kind:
           description: >
             The message type identifier.
             Typically a URL pointing to a human readable description of the message.
