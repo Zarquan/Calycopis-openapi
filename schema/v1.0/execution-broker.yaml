@@ -46,21 +46,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+              $ref: './components.yaml#/components/schemas/OfferSetRequest'
 #             $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 #             oneOf:
 #               - $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
 #               - $ref: './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
           application/xml:
             schema:
-              $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+              $ref: './components.yaml#/components/schemas/OfferSetRequest'
 #             $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 #             oneOf:
 #               - $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
 #               - $ref: './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
           application/yaml:
             schema:
-              $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+              $ref: './components.yaml#/components/schemas/OfferSetRequest'
 #             $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 #             oneOf:
 #               - $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
@@ -139,21 +139,24 @@ paths:
           content:
             application/json:
               schema:
-               $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseThree'
+#               $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
 #               $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 #               oneOf:
 #                 - $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
 #                 - $ref: './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
             application/xml:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseThree'
+#               $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
 #               $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 #               oneOf:
 #                 - $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
 #                 - $ref: './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
             application/yaml:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseThree'
+#               $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
 #               $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 #               oneOf:
 #                 - $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
@@ -191,16 +194,45 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseThree'
+#               $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
 #               $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
             application/xml:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseThree'
+#               $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
 #               $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
             application/yaml:
               schema:
-                $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
+                $ref: 'ExecutionSessionResponseThree'
+#               $ref: './components.yaml#/components/schemas/ExecutionSessionResponse'
 #               $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 
+components:
+  schemas:
+
+    ExecutionSessionResponseOne:
+      description: >-
+        Container class for execution session responses.
+      type: object
+      title: ExecutionSessionResponseOne
+      $ref: './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
+
+    ExecutionSessionResponseTwo:
+      description: >-
+        Container class for execution session responses.
+      type: object
+      title: ExecutionSessionResponseTwo
+      allOf:
+        - $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
+
+    ExecutionSessionResponseThree:
+      description: >-
+        Container class for execution session responses.
+      type: object
+      title: ExecutionSessionResponseThree
+      oneOf:
+       - $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
+       - $ref: './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
 
 

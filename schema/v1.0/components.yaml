@@ -606,20 +606,192 @@ components:
       discriminator:
         propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/simple-execution-session-1.0":    './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/simple-execution-session-1.0":    'SimpleExecutionSession'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/scheduled-execution-session-1.0": 'ScheduledExecutionSession'
+         #"https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/simple-execution-session-1.0":    './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
          #"https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/scheduled-execution-session-1.0": './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
       allOf:
         - $ref: 'AbstractComponent'
 
-# session-response.yaml
-
-    ExecutionSessionResponse:
+    SimpleExecutionComponents:
       description: >-
-        Container class for execution session responses.
+        The combination of an executable and the compute, storage, volumes, and data resources it needs.
       type: object
-      title: ExecutionSessionResponse
+      title: SimpleExecutionComponents
+      properties:
+        executable:
+          $ref: 'AbstractExecutable'
+        compute:
+          $ref: 'AbstractComputeResource'
+        storage:
+          $ref: 'AbstractStorageResourceList'
+        volumes:
+          $ref: 'AbstractVolumeMountList'
+        data:
+          $ref: 'AbstractDataResourceList'
+
+    SimpleExecutionSessionPhase:
+      description: >-
+        The Execution Session phase.
+      type: string
+      title: SimpleExecutionSessionPhase
+      enum:
+        - INITIAL
+        - OFFERED
+        - ACCEPTED
+        - REJECTED
+        - EXPIRED
+
+        - WAITING
+        - PREPARING
+        - AVAILABLE
+        - RUNNING
+        - RELEASING
+
+        - COMPLETED
+        - FAILED
+        - CANCELLED
+
+    # TODO Expand this with an abstract base class and kind discriminator.
+    # TODO Add nems, descriptions and logos to the derived classes.
+    SimpleSessionConnector:
+      description: |
+        A connector to interact with the session.
+      type: object
+      title: SimpleSessionConnector
+      properties:
+        kind:
+          type: string
+          description: >-
+            A URI to identify the type of connector.
+        status:
+          type: string
+          enum:
+            - PREPARING
+            - AVAILABLE
+            - FINISHED
+          description: >-
+            A flag to indicate the staus of the access method.
+        protocol:
+          type: string
+          description: >-
+            The access protocol, provided by the server when an offer is made.
+            Typically one of [TCP, HTTP, HTTPS].
+        location:
+          type: string
+          description: >-
+            The access connector URL.
+
+    SimpleSessionConnectorList:
+      description: >-
+        A list of connection endpoints.
+      type: array
+      title: SimpleSessionConnectorList
+      xml:
+        name: connector
+      items:
+        $ref: 'SimpleSessionConnector'
+
+    SimpleExecutionSession:
+      description: >-
+        A simple execution session.
+      type: object
+      title: SimpleExecutionSession
+      xml:
+        name: execution
       allOf:
         - $ref: 'AbstractExecutionSession'
+        - type: object
+          properties:
+            phase:
+              $ref: 'SimpleExecutionSessionPhase'
+            expires:
+              description: >-
+                The date and time when this offer expires.
+                Only valid while the state is OFFERED.
+              xml:
+                name: expires
+              type: string
+              format: date-time
+        - $ref: 'SimpleExecutionComponents'
+        - type: object
+          properties:
+            connectors:
+              description: >-
+                A list of connectors to interact with the session.
+              $ref: 'SimpleSessionConnectorList'
+    ScheduleDuration:
+      type: object
+      name:  ScheduleDuration
+      title: ScheduleDuration
+      description: >-
+        A schedule duration.
+      properties:
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduleStartDurationInstant:
+      type: object
+      name:  ScheduleStartDurationInstant
+      title: ScheduleStartDurationInstant
+      description: >-
+        A schedule instant and duration.
+      properties:
+        start:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Instant'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduleStartDurationInterval:
+      type: object
+      name:  ScheduleStartDurationInterval
+      title: ScheduleStartDurationInterval
+      description: >-
+        A schedule interval and duration.
+      properties:
+        start:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduleDoneDurationInterval:
+      type: object
+      name:  ScheduleDoneDurationInterval
+      title: ScheduleDoneDurationInterval
+      description: >-
+        A schedule interval and duration.
+      properties:
+        done:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+        duration:
+          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+
+    ScheduledExecutionSchedule:
+      type: object
+      name:  ScheduledExecutionSchedule
+      title: ScheduledExecutionSchedule
+      description: >-
+        An Execution Session schedule.
+      properties:
+        preparing:
+          $ref: 'ScheduleStartDurationInstant'
+        available:
+          $ref: 'ScheduleStartDurationInterval'
+        releasing:
+          $ref: 'ScheduleStartDurationInstant'
+
+    ScheduledExecutionSession:
+      type: object
+      name:  ScheduledExecutionSession
+      title: ScheduledExecutionSession
+      description: >-
+        A scheduled execution session.
+      allOf:
+        - $ref: 'SimpleExecutionSession'
+        - type: object
+          properties:
+            schedule:
+              $ref: 'ScheduledExecutionSchedule'
 
 # offersets.yaml
 
@@ -647,6 +819,23 @@ components:
         requested:
           $ref: 'RequestedScheduleItem'
 
+    ExecutionRequestComponents:
+      description: >-
+        The combination of an executable and the compute, storage, volumes, and data resources it needs.
+      type: object
+      title: ExecutionComponents
+      properties:
+        executable:
+          $ref: 'AbstractExecutable'
+        compute:
+          $ref: 'AbstractComputeResource'
+        storage:
+          $ref: 'AbstractStorageResourceList'
+        volumes:
+          $ref: 'AbstractVolumeMountList'
+        data:
+          $ref: 'AbstractDataResourceList'
+
     OfferSetRequest:
       description: >-
         A request for a set of offers for an execution.
@@ -655,7 +844,8 @@ components:
       xml:
         name: offers-request
       allOf:
-        - $ref: 'SimpleExecutionComponents'
+        - $ref: 'ExecutionRequestComponents'
+       #- $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionComponents'
         - type: object
           properties:
             schedule:
@@ -696,7 +886,7 @@ components:
                 name: offers
                 wrapped: true
               items:
-                $ref: 'ExecutionSessionResponse'
+                $ref: 'AbstractExecutionSession'
                 xml:
                   name: execution
 
