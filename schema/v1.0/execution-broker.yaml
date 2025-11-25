@@ -211,11 +211,3 @@ components:
        - $ref: './components.yaml#/components/schemas/SimpleExecutionSession'
        - $ref: './components.yaml#/components/schemas/ScheduledExecutionSession'
 
-    UpdateRequest:
-      type: object
-      name:  UpdateRequest
-      title: UpdateRequest
-      description: >-
-        A request to update a component.
-      $ref: './components.yaml#/components/schemas/AbstractUpdate'
-
