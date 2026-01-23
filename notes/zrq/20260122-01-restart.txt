@@ -1,0 +1,660 @@
+#
+# <meta:header>
+#   <meta:licence>
+#     Copyright (c) 2026, Manchester (http://www.manchester.ac.uk/)
+#
+#     This information is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     This information is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this software. If not, see <http://www.gnu.org/licenses/>.
+#   </meta:licence>
+# </meta:header>
+#
+#zrq-notes-indent
+#
+# AIMetrics: []
+#
+
+    Target:
+
+        Change of direction to UKSRC and JBO rather than SRCNet.
+
+    Result:
+
+        Work in progress ...
+
+# -----------------------------------------------------
+
+    TODO
+
+        #50 Automate the code generation and integrate it into GitHub workflows
+        https://github.com/ivoa/Calycopis-schema/issues/50
+
+        Rename ExecutionSession to Execution
+        #47 Change ExecutionSession and Session to just Execution
+        https://github.com/ivoa/Calycopis-schema/issues/47
+
+        #46 Revisit AbstractExecutionSession, SimpleExecutionSession and ScheduledExecutionSession
+        https://github.com/ivoa/Calycopis-schema/issues/46
+
+
+    Middle
+
+        #40 Expand SessionConnector · Issue #40 · ivoa/Calycopis-schema
+        https://github.com/ivoa/Calycopis-schema/issues/40
+
+    Later
+
+        #48 Component endpoints
+        https://github.com/ivoa/Calycopis-schema/issues/48
+
+        #45 Add Quarkus code generation
+        https://github.com/ivoa/Calycopis-schema/issues/45
+
+# -----------------------------------------------------
+
+    #50 Automate the code generation and integrate it into GitHub workflows
+    https://github.com/ivoa/Calycopis-schema/issues/50
+
+        we have several outputs, which could be generated in parallel
+
+            java-client
+            java-server-spring
+            java-server-quarkus
+
+            python-client
+            python-server-fastapi
+
+        Two or three stage workflow for each one
+
+            Generate the code from the schema
+            Build the artefact package
+                maven
+                python build
+            Publish the artefacts
+
+    GitHub Docs - Publishing packages
+    https://docs.github.com/en/actions/tutorials/publish-packages
+
+    GitHub Docs - Publishing Java packages with Maven
+    https://docs.github.com/en/actions/tutorials/publish-packages/publish-java-packages-with-maven
+
+    GitHub Docs - Publishing Java packages with Gradle
+    https://docs.github.com/en/actions/tutorials/publish-packages/publish-java-packages-with-gradle
+
+    GitHub Docs - Events that trigger workflows
+    https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_run
+
+    GitHub Docs - Workflow syntax for GitHub Actions
+    https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idneeds
+
+
+    Stack Overflow - How to run github actions sequentially
+    https://stackoverflow.com/questions/74477753/how-to-run-github-actions-sequentially
+
+    Stack Overflow - Dependencies Between Workflows on Github Actions
+    https://stackoverflow.com/questions/58457140/dependencies-between-workflows-on-github-actions/64733705#64733705
+
+    Stack Overflow - Create dependencies between jobs in GitHub Actions - Stack Overflow
+    https://stackoverflow.com/questions/63148639/create-dependencies-between-jobs-in-github-actions
+
+
+    Python Packaging User Guide - Publishing package distribution releases using GitHub Actions CI/CD workflows
+    https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
+
+    Python Packaging User Guide
+    https://packaging.python.org/en/latest/
+
+    Project Summaries - Python Packaging User Guide
+    https://packaging.python.org/en/latest/key_projects/
+
+    Python Packaging User Guide - Python wheel
+    https://packaging.python.org/en/latest/specifications/binary-distribution-format/
+
+        A wheel is a ZIP-format archive with a specially formatted file name and the .whl extension.
+        It contains a single distribution nearly as it would be installed according to PEP 376
+        with a particular installation scheme.
+
+    Python Packaging User Guide - The Packaging Flow
+    https://packaging.python.org/en/latest/flow/#the-built-distributions-wheels
+
+        python3 -m build source-tree-directory
+
+    Poetry
+    https://packaging.python.org/en/latest/key_projects/#poetry
+
+        Poetry is a command-line tool to handle dependency installation and isolation
+        as well as building and packaging of Python packages.
+        It uses pyproject.toml and, instead of depending on the resolver functionality
+        within pip, provides its own dependency resolver.
+
+
+# -----------------------------------------------------
+
+    Package naming conventions
+
+        Java packages
+
+            calycopis-openapi-client
+                https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/java.md
+                jar and src-jar and javadocs ?
+
+            calycopis-openapi-spring
+                https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/spring.md
+                jar and src-jar and javadocs ?
+
+            calycopis-openapi-quarkus
+                https://github.com/quarkiverse/quarkus-openapi-generator
+
+        Python modules
+        https://peps.python.org/pep-0008/#package-and-module-names
+        https://w3.cs.jmu.edu/spragunr/CS240_F12/style_guide.shtml
+
+            "Modules should have short, all-lowercase names.  Underscores can be used
+            in the module name if it improves readability.  Python packages should
+            also have short, all-lowercase names, although the use of underscores is
+            discouraged."
+
+            calycopis_openapi_client
+                https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/python.md
+                binary wheel and source tarball
+
+            calycopis_openapi_fastapi
+                https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/python-fastapi.md
+                binary wheel and source tarball
+
+# -----------------------------------------------------
+
+    Our current Maven build uses the openapitools plugin
+
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>7.14.0</version>
+
+    The generator is invoked during the 'generate' phase of the build.
+    Then the build and package part of the Maven project creates the final artifact.
+
+    This would work for the Java client and server artifacts.
+    Presumably we can integrate it into the GitHub actions.
+
+    GitHub Docs - Publishing Java packages with Maven
+    https://docs.github.com/en/actions/tutorials/publish-packages/publish-java-packages-with-maven#publishing-packages-to-github-packages
+    https://docs.github.com/en/actions/tutorials/publish-packages/publish-java-packages-with-maven#publishing-packages-to-github-packages
+
+    We could use Gradle .. more to learn at the same time.
+    GitHub Docs - Publishing Java packages with Gradle
+    https://docs.github.com/en/actions/tutorials/publish-packages/publish-java-packages-with-gradle
+
+
+    |
+    +-- bin
+    |    |
+    |    +-- ....
+    |
+    +-- .gitignore
+    |     build
+    |
+    +-- build
+    |    +-- calycopis-openapi-0.0.1-SNAPSHOT-20260119.yaml
+    |
+    +-- schema
+    |    |
+    |    +-- v1.0
+    |         |
+    |         +-- ....
+    |         +-- ....
+    |         +-- components
+    |              +-- ....
+    |              +-- ....
+    |
+    +-- java
+    |    |
+    |    +-- client
+    |    |    |
+    |    |    +-- ....
+    |    |    +-- pom.xml
+    |    |    |     name: calycopis-openapi-client
+    |    |    +-- gitignore
+    |    |    |     target
+    |    |    +-- target
+    |    |         |
+    |    |         +-- ....
+    |    |         +-- calycopis-openapi-client-{version}.jar
+    |    |
+    |    +-- spring
+    |         |
+    |         +-- ....
+    |         +-- pom.xml
+    |         |     name: calycopis-openapi-spring
+    |         +-- gitignore
+    |         |     target
+    |         +-- target
+    |              |
+    |              +-- ....
+    |              +-- calycopis-openapi-spring-{version}.jar
+    |
+    +-- python
+         |
+         +-- client
+         |     |
+         |     +-- ....
+         |     +-- gitignore
+         |     |     build
+         |     +-- build
+         |           calycopis_openapi_client
+         |
+         +-- fastapi
+               |
+               +-- ....
+               +-- gitignore
+               |     build
+               +-- build
+                     calycopis_openapi_fastapi
+
+# -----------------------------------------------------
+
+    Python
+
+        Operations Orchestration (OO) - Develop Maven artifacts for Python scripts
+        https://docs.microfocus.com/doc/397/2019.05.ng/mavenartifactspythonscripts
+
+            Probably not ..
+            It doesn't look like it creates an installable Python package.
+
+        linkedin/pygradle: Using Gradle to build Python projects
+        https://github.com/linkedin/pygradle
+
+            Looks better supported.
+
+
+
+
+# -----------------------------------------------------
+# -----------------------------------------------------
+# Create a new branch.
+#[user@desktop]
+
+    branchname=integration-build
+    newbranch=$(date '+%Y%m%d')-zrq-${branchname:?}
+
+    source "${HOME:?}/calycopis.env"
+    pushd "${TREBULA_CODE}"
+
+        git checkout main
+
+        git checkout -b "${newbranch:?}"
+
+    popd
+
+
+# -----------------------------------------------------
+# Run a plain vanilla Ubuntu container (similar to the GitHub runner).
+#[user@desktop]
+
+    #
+    # GitHub runner images - Ubuntu latest
+    # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md
+    #
+
+    source "${HOME:?}/calycopis.env"
+    podman run \
+        --rm \
+        --tty \
+        --interactive \
+        --name action-runner \
+        --volume "${TREBULA_CODE}:/trebula:rw,z" \
+        --volume "${HOME}/.m2/repository:/root/.m2/repository:rw,z" \
+        ubuntu:24.04 \
+        bash
+
+--START--
+....
+....
+--END--
+
+
+# -----------------------------------------------------
+# Create our build and dist directories.
+#[root@action-runner]
+
+    #
+    # Set our target version.
+    baseversion=0.0.2
+    javaversion=${baseversion:?}-SNAPSHOT-$(date '+%Y%m%d')
+
+    #
+    # Update a gitignore file.
+    checkignore()
+        {
+        local target=${1:?}
+        local targetpath=$(dirname  ${target})
+        local targetname=$(basename ${target})
+        local targetfile=${targetpath}/.gitignore
+
+        if [ ! -e "${targetfile}" ]
+        then
+            touch "${targetfile}"
+        fi
+
+        grep -qxF "${targetname}" "${targetfile}"
+        if [ $? -ne 0 ]
+        then
+            echo "${targetname}" >> "${targetfile:?}"
+        fi
+        }
+
+    #
+    # Check a directory exists.
+    checkexists()
+        {
+        local target=${1:?}
+
+        if [ ! -e "${target}" ]
+        then
+            mkdir \
+                --parents \
+                "${target}"
+        fi
+        }
+
+    #
+    # Create our schema build directory.
+    checkignore \
+        /trebula/build
+
+    checkexists \
+        /trebula/build
+
+
+# -----------------------------------------------------
+# Install NPN, Python, and Java.
+# https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md#language-and-runtime
+# https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md#java
+#[root@action-runner]
+
+    #
+    # Npm 10.8.2
+    # Python 3.12.3
+    # Java 25.0.1+8
+    #
+
+    apt update
+
+    apt show npm
+
+--START--
+....
+Package: npm
+Version: 9.2.0~ds1-2
+....
+--END--
+
+
+    #
+    # Available Python packages
+    # https://documentation.ubuntu.com/ubuntu-for-developers/reference/availability/python/
+
+    apt show python3.12
+
+--START--
+....
+Package: python3
+Version: 3.12.3-0ubuntu2.1
+....
+--END--
+
+
+    #
+    # Available Java packages.
+    # https://documentation.ubuntu.com/ubuntu-for-developers/reference/availability/java/
+
+    apt show openjdk-25-jdk
+
+--START--
+....
+Package: openjdk-25-jdk
+Version: 25.0.1+8-1~24.04
+....
+--END--
+
+
+    export DEBIAN_FRONTEND=noninteractive
+
+    apt install -y \
+        python3.12 \
+        python3-venv \
+        pip
+
+    apt install -y \
+        openjdk-25-jdk
+
+    apt install -y \
+        npm
+
+--START--
+....
+....
+--END--
+
+
+# -----------------------------------------------------
+# Use the redocly bundle tool to create a single YAML file.
+# https://redocly.com/docs/cli/commands/bundle
+#[root@action-runner]
+
+    npx -y @redocly/cli@latest \
+        bundle \
+            /trebula/schema/v1.0/execution-broker.yaml \
+            --output /trebula/build/calycopis-broker-${baseversion:?}.yaml
+
+--START--
+....
+....
+npm WARN tar TAR_ENTRY_ERROR EINVAL: invalid argument, fchown
+npm WARN tar TAR_ENTRY_ERROR EINVAL: invalid argument, fchown
+file:///root/.npm/_npx/dfb62dab4341508f/node_modules/@redocly/cli/lib/commands/build-docs/utils.js:4
+import { ServerStyleSheet } from 'styled-components';
+         ^^^^^^^^^^^^^^^^
+SyntaxError: Named export 'ServerStyleSheet' not found. The requested module 'styled-components' is a CommonJS module, which may not support all module.exports as named exports.
+CommonJS modules can always be imported via the default export, for example using:
+
+import pkg from 'styled-components';
+const { ServerStyleSheet } = pkg;
+
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:123:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:191:5)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12)
+
+Node.js v18.19.1
+--END--
+
+
+# -----------------------------------------------------
+# Use our own toolkit to create a single YAML file.
+# https://github.com/ivoa/Calycopis-Isobeon
+#[root@action-runner]
+
+    git clone https://github.com/ivoa/Calycopis-Isobeon.git /isobeon
+
+    pip install \
+        --requirement /isobeon/requirements.txt
+
+--START--
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+....
+....
+--END--
+
+    #
+    # $%#!! this is in a $%#!!ing container !!!
+    #
+
+    python3 -m venv \
+        /tmp/venv
+
+    /tmp/venv/bin/pip \
+        install \
+            --requirement /isobeon/requirements.txt
+
+    /tmp/venv/bin/python \
+        /isobeon/schema-processor.py \
+            "/trebula/schema/v1.0/execution-broker.yaml" \
+            "/trebula/build/execution-broker-${baseversion}.yaml"
+
+--START--
+Input:  /trebula/schema/v1.0/execution-broker.yaml
+Output: /trebula/build/execution-broker-0.0.1.yaml
+Inlining external schema 'OfferSetRequest' from: ./components.yaml#/components/schemas/OfferSetRequest
+Inlining local schema: ExecutionRequestComponents
+Inlining local schema: AbstractExecutable
+....
+....
+Inlining from discriminator mapping: IntegerValueUpdate
+Inlining from discriminator mapping: IntegerDeltaUpdate
+✅ All references processed and saved.
+--END--
+
+
+    #
+    # OMG that was way too much hard work to get here.
+    #
+
+
+# -----------------------------------------------------
+# Install the openapi code generator.
+#[root@action-runner]
+
+    generatorName=openapi-generator-cli
+    generatorVersion=7.18.0
+    generatorJarFile=${generatorName}-${generatorVersion}.jar
+    generatorPath=/opt/openapi-generator
+    generatorFullPath=${generatorPath}/${generatorJarFile}
+
+    checkexists \
+        "${generatorPath}"
+
+    if [ ! -e "${generatorFullPath}" ]
+    then
+
+        which wget &> /dev/null
+        if [ $? -ne 0 ]
+        then
+            apt install -y \
+                wget
+        fi
+
+        wget https://repo1.maven.org/maven2/org/openapitools/${generatorName}/${generatorVersion}/${generatorJarFile} \
+             --output-document "${generatorFullPath}"
+    fi
+
+# -----------------------------------------------------
+# Generate our Python client classes.
+# https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/python.md
+#[root@action-runner]
+
+    source=/trebula/build/execution-broker-${baseversion}.yaml
+    target=/trebula/python/client/build
+
+    checkignore \
+        "${target}"
+
+    checkexists \
+        "${target}"
+
+    java -jar "${generatorFullPath}" \
+        generate \
+        --generator-name python \
+        --input-spec "${source}" \
+        --output     "${target}" \
+        --package-name "calycopis_openapi_client" \
+        --additional-properties "packageUrl=https://github.com/ivoa/Calycopis-schema" \
+        --additional-properties "packageVersion=${baseversion}" \
+        --additional-properties "projectName=calycopis-openapi-client" \
+
+--START--
+....
+....
+--END--
+
+
+# -----------------------------------------------------
+# Package our Python client classes.
+# https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools
+#[root@action-runner]
+
+    /tmp/venv/bin/pip \
+        install \
+            twine \
+            build
+
+    /tmp/venv/bin/python \
+        -m build \
+            "${target}"
+
+
+--START--
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools
+....
+....
+adding 'calycopis_openapi_client-1.0.0.dist-info/top_level.txt'
+adding 'calycopis_openapi_client-1.0.0.dist-info/RECORD'
+removing build/bdist.linux-x86_64/wheel
+Successfully built calycopis_openapi_client-1.0.0.tar.gz and calycopis_openapi_client-1.0.0-py3-none-any.whl
+--END--
+
+
+    ls -al "${target}/dist/"
+
+--START--
+....
+....
+-rw-r--r--. 1 root root 127316 Jan 23 21:25 calycopis_openapi_client-1.0.0-py3-none-any.whl
+-rw-r--r--. 1 root root  56345 Jan 23 21:25 calycopis_openapi_client-1.0.0.tar.gz
+--END--
+
+    #
+    # Need to set the module/package version.
+    #
+
+
+
+# -----------------------------------------------------
+# Generate code for the Java client.
+#[root@action-runner]
+
+
+
+
+
+# -----------------------------------------------------
+# Generate code for the Java Spring framework.
+#[root@action-runner]
+
+
+
+
+
+
+
