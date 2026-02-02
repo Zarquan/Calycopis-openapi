@@ -149,9 +149,15 @@ jobs:
           python -m build \
             'python/client/build'
 
-      - name: Upload Python distribution files
+      - name: Upload the distribution tar file
         uses: actions/upload-artifact@v4
         with:
-          name: 'calycopis-python-client'
-          path: 'python/client/build/dist/'
+          name: 'calycopis-python-client-targz'
+          path: 'python/client/build/dist/calycopis-openapi-client-${{env.schemaversion}}.tar.gz'
+
+      - name: Upload the distribution wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'calycopis-python-client-wheel'
+          path: 'python/client/build/dist/calycopis-openapi-client-${{env.schemaversion}}-py3-none-any.whl'
 
