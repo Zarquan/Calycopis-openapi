@@ -1,0 +1,3 @@
+[submodule "isobeon"]
+	path = isobeon
+	url = git@github.com:ivoa/Calycopis-Isobeon.git
