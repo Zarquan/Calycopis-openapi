@@ -1,0 +1,86 @@
+#
+# <meta:header>
+#   <meta:licence>
+#     Copyright (c) 2024, Manchester University (http://www.manchester.ac.uk/)
+#
+#     This work is made available under the Creative Commons
+#     Attribution-ShareAlike 4.0 International licence.
+#
+#     For details of the licence terms see:
+#     https://creativecommons.org/licenses/by-sa/4.0/
+#   </meta:licence>
+# </meta:header>
+#
+# AIMetrics: [
+#     {
+#     "name": "ChatGPT",
+#     "contribution": {
+#       "value": 5,
+#       "units": "%"
+#       }
+#     }
+#   ]
+#
+# This workflow build the Java client libraries.
+#
+
+name: Java client CI using Maven
+
+on:
+  push:
+    #branches: [ "main" ]
+  pull_request:
+    #branches: [ "main" ]
+
+jobs:
+
+  build-client:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+
+      # https://github.com/actions/checkout
+      - name: Checkout the schema project
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      # https://github.com/marketplace/actions/setup-python
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      # https://github.com/marketplace/actions/python-dependency-installation
+      - name: Install Python dependencies
+        uses: py-actions/py-dependency-install@v4
+        with:
+          path: isobeon/requirements.txt
+
+      # https://github.com/marketplace/actions/yaml-file-reader
+      # - name Read build settings from a YAML file ...
+      #   uses: MangalAnkur/DevOpsPlanet-read-yaml-file@v1
+
+      - name: Create build directory
+        run: |
+          mkdir --parents \
+            build
+
+      # ....
+      - name: Run the schema processor
+        run: |
+          python \
+            isobeon/schema-processor.py \
+              schema/v1.0/execution-broker.yaml \
+              build/execution-broker-1.0.2.yaml
+
+      - name: Check result exists
+        uses: andstor/file-existence-action@v3
+        with:
+          fail:  true
+          files: build/execution-broker-1.0.2.yaml
+
+
