@@ -112,32 +112,46 @@ jobs:
           version:    '${{env.openapiGeneratorVersion}}'
           extension:  'jar'
 
-      - name: Check file path
-        run: |
-          echo "File has been downloaded to [${{steps.download-openapi-generator.outputs.file}}]"
+#     - name: Check file path
+#       run: |
+#         echo "File has been downloaded to [${{steps.download-openapi-generator.outputs.file}}]"
 
       - name: Create the Python build directory
         run: |
           mkdir --parents \
-            python/client/build
+            'python/client/build'
 
       - name: Generate the Python client
         run: |
-          java -jar "${{steps.download-openapi-generator.outputs.file}}" \
+          java -jar '${{steps.download-openapi-generator.outputs.file}}' \
             generate \
             --generator-name python \
-            --input-spec "${{env.schematarget}}" \
-            --output     "python/client/build" \
-            --package-name "calycopis_openapi_client" \
-            --additional-properties "packageUrl=https://github.com/ivoa/Calycopis-schema" \
-            --additional-properties "packageVersion=${{env.schemaversion}}" \
-            --additional-properties "projectName=calycopis-openapi-client"
+            --input-spec '${{env.schematarget}}' \
+            --output     'python/client/build' \
+            --package-name 'calycopis_openapi_client' \
+            --additional-properties 'packageUrl=https://github.com/ivoa/Calycopis-schema' \
+            --additional-properties 'packageVersion=${{env.schemaversion}}' \
+            --additional-properties 'projectName=calycopis-openapi-client'
 
-      - name: Check the result
+#     - name: Check the result
+#       run: |
+#         ls -al python/client/build
+
+      - name: Install Python build tools
+        uses: BSFishy/pip-action@v1
+        with:
+          packages: |
+            twine
+            build
+
+      - name: Build the Python distribution
         run: |
-          ls -al python/client/build
+          python -m build \
+            'python/client/build'
 
-
-
-
+      - name: Upload Python distribution files
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'calycopis-python-client'
+          path: 'python/client/build/dist/'
 
