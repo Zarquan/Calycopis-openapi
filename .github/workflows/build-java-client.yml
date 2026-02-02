@@ -32,22 +32,22 @@ jobs:
     permissions:
       contents: read
 
-#   env:
-#     schemasource:  schema/v1.0/execution-broker.yaml
-#     schemaversion: 1.0.2
+    env:
+      schemasource:  schema/v1.0/execution-broker.yaml
+      schemaversion: 1.0.2
 
     steps:
 
-      # https://github.com/marketplace/actions/yaml-file-reader
-      - name: Read the project config
-        uses: MangalAnkur/DevOpsPlanet-read-yaml-file@v1
-        with:
-          yaml-file: config.yaml
+#     # https://github.com/marketplace/actions/yaml-file-reader
+#     - name: Read the project config
+#       uses: MangalAnkur/DevOpsPlanet-read-yaml-file@v1
+#       with:
+#         yaml-file: config.yaml
 
       - name: Check the config
         run: |
-          echo "schemasource  [${{ schemasource }}]"
-          echo "schemaversion [${{ schemaversion }}]"
+          echo "schemasource  [${{env.schemasource}}]"
+          echo "schemaversion [${{env.schemaversion}}]"
 
       # https://github.com/actions/checkout
       - name: Checkout the schema project
