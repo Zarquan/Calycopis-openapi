@@ -16,7 +16,7 @@
 # A GitHub workflow to build and publish the Java client libraries.
 #
 
-name: Java client CI using Maven
+name: Python client CI using Maven
 
 on:
   push:
@@ -153,11 +153,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: 'calycopis-python-client-targz'
-          path: 'python/client/build/dist/calycopis-openapi-client-${{env.schemaversion}}.tar.gz'
+          path: 'python/client/build/dist/calycopis_openapi_client-${{env.schemaversion}}.tar.gz'
 
       - name: Upload the distribution wheel
         uses: actions/upload-artifact@v4
         with:
           name: 'calycopis-python-client-wheel'
-          path: 'python/client/build/dist/calycopis-openapi-client-${{env.schemaversion}}-py3-none-any.whl'
+          path: 'python/client/build/dist/calycopis_openapi_client-${{env.schemaversion}}-py3-none-any.whl'
 
