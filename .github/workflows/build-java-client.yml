@@ -130,7 +130,7 @@ jobs:
             --output     "python/client/build" \
             --package-name "calycopis_openapi_client" \
             --additional-properties "packageUrl=https://github.com/ivoa/Calycopis-schema" \
-            --additional-properties "packageVersion=${{schemaversion}}" \
+            --additional-properties "packageVersion=${{env.schemaversion}}" \
             --additional-properties "projectName=calycopis-openapi-client"
 
       - name: Check the result
