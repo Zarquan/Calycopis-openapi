@@ -46,8 +46,8 @@ jobs:
 
       - name: Check the config
         run: |
-          echo "schemasource  [${{ env.schemasource }}]"
-          echo "schemaversion [${{ env.schemaversion }}]"
+          echo "schemasource  [${{ schemasource }}]"
+          echo "schemaversion [${{ schemaversion }}]"
 
       # https://github.com/actions/checkout
       - name: Checkout the schema project
@@ -81,22 +81,22 @@ jobs:
         run: |
           python \
             isobeon/schema-processor.py \
-              ${{ env.schemasource }} \
-              build/execution-broker-${{ env.schemaversion }}.yaml
+              ${{schemasource}} \
+              build/execution-broker-${{schemaversion}}.yaml
 
       - name: Check result exists
         uses: andstor/file-existence-action@v3
         with:
           fail:  true
-          files: build/execution-broker-${{ env.schemaversion }}.yaml
+          files: build/execution-broker-${{schemaversion}}.yaml
 
       - name: Check result content
         run: |
-          head build/execution-broker-${{ env.schemaversion }}.yaml
+          head build/execution-broker-${{schemaversion}}.yaml
 
       - name: Check result content
         run: |
-          tail build/execution-broker-${{ env.schemaversion }}.yaml
+          tail build/execution-broker-${{schemaversion}}.yaml
 
 
 
