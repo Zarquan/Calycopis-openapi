@@ -16,7 +16,7 @@
 # A GitHub workflow to build and publish the Java client libraries.
 #
 
-name: Python client CI using Maven
+name: Calycopis Python client
 
 on:
   push:
@@ -31,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: write
 
     env:
       schemasource:  'schema/v1.0/execution-broker.yaml'
@@ -149,15 +150,24 @@ jobs:
           python -m build \
             'python/client/build'
 
-      - name: Upload the distribution tar file
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'calycopis-python-client-targz'
-          path: 'python/client/build/dist/calycopis_openapi_client-${{env.schemaversion}}.tar.gz'
+#     - name: Upload the distribution tar file
+#       uses: actions/upload-artifact@v4
+#       with:
+#         name: 'calycopis-python-client-targz'
+#         path: 'python/client/build/dist/calycopis_openapi_client-${{env.schemaversion}}.tar.gz'
+#
+#     - name: Upload the distribution wheel
+#       uses: actions/upload-artifact@v4
+#       with:
+#         name: 'calycopis-python-client-wheel'
+#         path: 'python/client/build/dist/calycopis_openapi_client-${{env.schemaversion}}-py3-none-any.whl'
 
-      - name: Upload the distribution wheel
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'calycopis-python-client-wheel'
-          path: 'python/client/build/dist/calycopis_openapi_client-${{env.schemaversion}}-py3-none-any.whl'
+      - name: Publish our Python package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m twine \
+            upload \
+              --repository-url https://api.github.com/orgs/Zarquan/packages/pypi/upload \
+              python/client/build/dist/*
 
