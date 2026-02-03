@@ -264,14 +264,23 @@ jobs:
           EOF
           popd
 
-      # Save/restore the cache
       # https://github.com/marketplace/actions/maven-cache
+      - name: Restore our Maven cache
+        uses: skjolber/maven-cache-github-action@v3.1.1
+        with:
+          step: restore
 
       - name: Run the Maven build
         run: |
           pushd codegen/java/client
             ./mvnw --batch-mode install
           popd
+
+      # https://github.com/marketplace/actions/maven-cache
+      - name: Restore our Maven cache
+        uses: skjolber/maven-cache-github-action@v3.1.1
+        with:
+          step: save
 
       - name: Upload the client JAR
         uses: actions/upload-artifact@v4
@@ -331,8 +340,11 @@ jobs:
           EOF
           popd
 
-      # Save/restore the cache
       # https://github.com/marketplace/actions/maven-cache
+      - name: Restore our Maven cache
+        uses: skjolber/maven-cache-github-action@v3.1.1
+        with:
+          step: restore
 
       - name: Run the Maven build
         run: |
@@ -340,10 +352,16 @@ jobs:
             ./mvnw --batch-mode install
           popd
 
+      # https://github.com/marketplace/actions/maven-cache
+      - name: Save our Maven cache
+        uses: skjolber/maven-cache-github-action@v3.1.1
+        with:
+          step: save
+
       - name: Upload the client JAR
         uses: actions/upload-artifact@v4
         with:
-          name: 'calycopis-java-client'
+          name: 'calycopis-java-spring'
           path: 'codegen/java/spring/target/calycopis-spring-${{env.schemaversion}}-SNAPSHOT.jar'
 
 
