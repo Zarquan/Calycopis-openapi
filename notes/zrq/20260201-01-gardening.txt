@@ -131,7 +131,6 @@
         --tty \
         --interactive \
         --name action-runner \
-        --volume "${ISOBEON_CODE}:/isobeon:rw,z" \
         --volume "${TREBULA_CODE}:/trebula:rw,z" \
         --volume "${CALYCOPIS_CODE}:/calycopis:rw,z" \
         --volume "${HOME}/.m2/repository:/root/.m2/repository:rw,z" \
@@ -189,26 +188,22 @@
 
     source /trebula/project.properties
 
-    #
-    # Skip the clone because we mounted from local disk.
-    # git clone https://github.com/ivoa/Calycopis-Isobeon.git /isobeon
-
     python3 -m venv \
         /tmp/venv
 
     /tmp/venv/bin/pip \
         install \
-            --requirement /isobeon/requirements.txt
+            --requirement /trebula/isobeon/requirements.txt
 
     rm -rf \
-        /trebula/build
+        /trebula/schema/build
     mkdir --parents \
-        /trebula/build
+        /trebula/schema/build
 
     /tmp/venv/bin/python \
-        /isobeon/schema-processor.py \
+        /trebula/isobeon/schema-processor.py \
             "/trebula/schema/${schemapath:?}/execution-broker.yaml" \
-            "/trebula/build/execution-broker-${schemaversion:?}.yaml"
+            "/trebula/schema/build/execution-broker-${schemaversion:?}.yaml"
 
     >   ....
     >   ....
@@ -255,8 +250,8 @@
 
     source /trebula/project.properties
 
-    schemafile=/trebula/build/execution-broker-${schemaversion:?}.yaml
-    buildpath=/trebula/python/client/build
+    schemafile=/trebula/schema/build/execution-broker-${schemaversion:?}.yaml
+    buildpath=/trebula/codegen/python/client/build
 
     rm -rf \
         "${buildpath:?}"
@@ -268,16 +263,33 @@
         --generator-name python \
         --input-spec "${schemafile:?}" \
         --output     "${buildpath:?}" \
-        --package-name "calycopis_openapi_client" \
+        --additional-properties "projectName=calycopis_client" \
+        --additional-properties "packageName=calycopis_client" \
         --additional-properties "packageUrl=https://github.com/ivoa/Calycopis-schema" \
-        --additional-properties "packageVersion=${schemaversion:?}" \
-        --additional-properties "projectName=calycopis-openapi-client"
+        --additional-properties "packageVersion=${schemaversion:?}"
 
     >   ....
     >   ....
     >   [main] INFO  o.o.codegen.TemplateManager - writing file /trebula/python/client/build/.openapi-generator/VERSION
     >   [main] INFO  o.o.codegen.TemplateManager - writing file /trebula/python/client/build/.openapi-generator/FILES
 
+
+# -----------------------------------------------------
+# Fix the project name.
+# https://github.com/OpenAPITools/openapi-generator/issues/17315#issuecomment-3195575435
+#[root@action-runner]
+
+    sed -i '
+        /^\[project/,/^\[project.urls/ {
+            /^name/ {
+                s/".*"/"calycopis-client"/
+                }
+            }
+        ' /trebula/codegen/python/client/build/pyproject.toml
+
+    #
+    # Doesn't work, something in the build process changes it back.
+    #
 
 # -----------------------------------------------------
 # Package our Python client classes.
@@ -295,18 +307,18 @@
 
     >   ....
     >   ....
-    >   adding 'calycopis_openapi_client-1.0.2.dist-info/top_level.txt'
-    >   adding 'calycopis_openapi_client-1.0.2.dist-info/RECORD'
+    >   adding 'calycopis_client-1.0.2.dist-info/top_level.txt'
+    >   adding 'calycopis_client-1.0.2.dist-info/RECORD'
     >   removing build/bdist.linux-x86_64/wheel
-    >   Successfully built calycopis_openapi_client-1.0.2.tar.gz and calycopis_openapi_client-1.0.2-py3-none-any.whl
+    >   Successfully built calycopis_client-1.0.2.tar.gz and calycopis_client-1.0.2-py3-none-any.whl
 
 
     ls -al "${buildpath:?}/dist"
 
     >   ....
     >   ....
-    >   -rw-r--r--. 1 root root 127332 Feb  1 15:51 calycopis_openapi_client-1.0.2-py3-none-any.whl
-    >   -rw-r--r--. 1 root root  56373 Feb  1 15:51 calycopis_openapi_client-1.0.2.tar.gz
+    >   -rw-r--r--. 1 root root 125840 Feb  3 17:50 calycopis_client-1.0.2-py3-none-any.whl
+    >   -rw-r--r--. 1 root root  56252 Feb  3 17:50 calycopis_client-1.0.2.tar.gz
 
 
 # -----------------------------------------------------
@@ -317,33 +329,61 @@
 
     pushd /trebula/codegen/java/client/
 
-        #
-        # Update the build properties.
-        rm -rf build
-        mkdir --parents build
-        cat > build/build.properties << EOF
-trebula.schema.file=/trebula/build/execution-broker-${schemaversion:?}.yaml
+        cat > build.properties << EOF
+calycopis.schema.file=/trebula/schema/build/execution-broker-${schemaversion:?}.yaml
 EOF
 
-        #
-        # Build and install the Java package.
         ./mvnw clean install
 
     popd
 
     >   ....
     >   ....
-    >   [INFO] --- jar:3.4.1:jar (default-jar) @ calycopis-openapi-client ---
-    >   [INFO] Building jar: /trebula/codegen/java/client/target/calycopis-openapi-client-1.0.2-SNAPSHOT.jar
     >   [INFO]
-    >   [INFO] --- install:3.1.2:install (default-install) @ calycopis-openapi-client ---
-    >   [INFO] Installing /trebula/codegen/java/client/pom.xml to /root/.m2/repository/net/ivoa/calycopis/calycopis-openapi-client/1.0.2-SNAPSHOT/calycopis-openapi-client-1.0.2-SNAPSHOT.pom
-    >   [INFO] Installing /trebula/codegen/java/client/target/calycopis-openapi-client-1.0.2-SNAPSHOT.jar to /root/.m2/repository/net/ivoa/calycopis/calycopis-openapi-client/1.0.2-SNAPSHOT/calycopis-openapi-client-1.0.2-SNAPSHOT.jar
+    >   [INFO] --- jar:3.4.1:jar (default-jar) @ calycopis-client ---
+    >   [INFO] Building jar: /trebula/codegen/java/client/target/calycopis-client-1.0.2-SNAPSHOT.jar
+    >   [INFO]
+    >   [INFO] --- install:3.1.2:install (default-install) @ calycopis-client ---
+    >   [INFO] Installing /trebula/codegen/java/client/pom.xml to /root/.m2/repository/net/ivoa/calycopis/calycopis-client/1.0.2-SNAPSHOT/calycopis-client-1.0.2-SNAPSHOT.pom
+    >   [INFO] Installing /trebula/codegen/java/client/target/calycopis-client-1.0.2-SNAPSHOT.jar to /root/.m2/repository/net/ivoa/calycopis/calycopis-client/1.0.2-SNAPSHOT/calycopis-client-1.0.2-SNAPSHOT.jar
     >   [INFO] ------------------------------------------------------------------------
     >   [INFO] BUILD SUCCESS
     >   [INFO] ------------------------------------------------------------------------
-    >   [INFO] Total time:  10.686 s
-    >   [INFO] Finished at: 2026-02-01T15:53:54Z
+    >   [INFO] Total time:  11.514 s
+    >   [INFO] Finished at: 2026-02-03T18:08:33Z
+    >   [INFO] ------------------------------------------------------------------------
+
+
+# -----------------------------------------------------
+# Build and package our Spring webapp.
+#[root@action-runner]
+
+    source /trebula/project.properties
+
+    pushd /trebula/codegen/java/spring/
+
+        cat > build.properties << EOF
+calycopis.schema.file=/trebula/schema/build/execution-broker-${schemaversion:?}.yaml
+EOF
+
+        ./mvnw clean install
+
+    popd
+
+    >   ....
+    >   ....
+    >   [INFO]
+    >   [INFO] --- jar:3.4.2:jar (default-jar) @ calycopis-spring ---
+    >   [INFO] Building jar: /trebula/codegen/java/spring/target/calycopis-spring-1.0.2-SNAPSHOT.jar
+    >   [INFO]
+    >   [INFO] --- install:3.1.4:install (default-install) @ calycopis-spring ---
+    >   [INFO] Installing /trebula/codegen/java/spring/pom.xml to /root/.m2/repository/net/ivoa/calycopis/calycopis-spring/1.0.2-SNAPSHOT/calycopis-spring-1.0.2-SNAPSHOT.pom
+    >   [INFO] Installing /trebula/codegen/java/spring/target/calycopis-spring-1.0.2-SNAPSHOT.jar to /root/.m2/repository/net/ivoa/calycopis/calycopis-spring/1.0.2-SNAPSHOT/calycopis-spring-1.0.2-SNAPSHOT.jar
+    >   [INFO] ------------------------------------------------------------------------
+    >   [INFO] BUILD SUCCESS
+    >   [INFO] ------------------------------------------------------------------------
+    >   [INFO] Total time:  11.423 s
+    >   [INFO] Finished at: 2026-02-03T18:11:42Z
     >   [INFO] ------------------------------------------------------------------------
 
 

@@ -1,0 +1,137 @@
+#
+# <meta:header>
+#   <meta:licence>
+#     Copyright (c) 2026, Manchester (http://www.manchester.ac.uk/)
+#
+#     This information is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     This information is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this software. If not, see <http://www.gnu.org/licenses/>.
+#   </meta:licence>
+# </meta:header>
+#
+#zrq-notes-indent
+#
+# AIMetrics: []
+#
+
+    Target:
+
+        Create our GitHub workflows.
+
+    Result:
+
+        Work in progress ...
+
+# -----------------------------------------------------
+
+    #
+    # Do we add our schema processor as a submodule, or just checkout a copy when we need it ?
+    # submodule + it is just always there
+    #
+
+# -----------------------------------------------------
+
+    #
+    # Share results between workflow jobs
+    # https://docs.github.com/en/actions/tutorials/store-and-share-data
+    # https://docs.github.com/en/actions/tutorials/store-and-share-data#passing-data-between-jobs-in-a-workflow
+    #
+    # Share the combined schema.
+    # Share the client code to test the server.
+    #
+
+# -----------------------------------------------------
+
+    #
+    # GitHub packages doesn't support Python ?!
+    # https://github.com/orgs/community/discussions/8542
+    #
+    # Or does it ?
+    # https://dev.to/abdellahhallou/create-and-release-a-private-python-package-on-github-2oae
+    # https://github.com/ABDELLAH-Hallou/Private-Python-Package-Deployment
+    #
+    # Or use the OCI registry ?
+    # https://github.com/AllexVeldman/pyoci
+    #
+
+# -----------------------------------------------------
+
+    #
+    # Alternative is just to deploy the Python package to PyPi.
+    # https://pypi.org/manage/projects/
+    #
+    # Need to decide on the distribution and package names.
+    # https://packaging.python.org/en/latest/glossary/#term-Import-Package
+    # https://packaging.python.org/en/latest/glossary/#term-Distribution-Package
+    # https://packaging.python.org/en/latest/discussions/distribution-package-vs-import-package/#how-do-distribution-package-names-and-import-package-names-compare
+    #
+
+    We want to be able to do
+
+        pip install calycopis-client
+
+    and
+
+        import calycopis.client
+        ...
+
+    #
+    # I'd like to experiment with using the package before we do this.
+    # So leave it as a downloadable file for now ..
+    #
+
+
+
+# -----------------------------------------------------
+# Add our schema processor as a submodule.
+#[user@desktop]
+
+    source "${HOME:?}/calycopis.env"
+    pushd "${TREBULA_CODE:?}"
+
+        git submodule add git@github.com:ivoa/Calycopis-Isobeon.git isobeon
+
+        git status
+
+    >   ....
+    >   new file:   .gitmodules
+    >   new file:   isobeon
+    >   ....
+
+        git commit -m "Added Isobeon as a submodule" \
+            .gitmodules \
+            isobeon
+
+        git push
+
+    popd
+
+# -----------------------------------------------------
+# Create our workflows.
+#[user@desktop]
+
+    source "${HOME:?}/calycopis.env"
+    pushd "${TREBULA_CODE:?}"
+
+        mkdir .github
+        mkdir .github/workflows
+
+        pluma .github/workflows/build-java-client.yml &
+
+
+
+
+
+
+
+
+
