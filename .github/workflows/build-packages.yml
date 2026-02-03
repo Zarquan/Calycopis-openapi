@@ -199,16 +199,10 @@ jobs:
           python -m build \
             'codegen/python/client/build'
 
-      - name: Upload the distribution tar file
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'calycopis-python-client-targz'
-          path: 'codegen/python/client/build/dist/calycopis_client-${{env.schemaversion}}.tar.gz'
-
       - name: Upload the distribution wheel
         uses: actions/upload-artifact@v4
         with:
-          name: 'calycopis-python-client-wheel'
+          name: 'calycopis-python-client'
           path: 'codegen/python/client/build/dist/calycopis_client-${{env.schemaversion}}-py3-none-any.whl'
 
 
@@ -264,11 +258,18 @@ jobs:
           EOF
           popd
 
-      # https://github.com/marketplace/actions/maven-cache
-      - name: Restore our Maven cache
-        uses: skjolber/maven-cache-github-action@v3.1.1
+#     # https://github.com/marketplace/actions/maven-cache
+#     - name: Restore our Maven cache
+#       uses: skjolber/maven-cache-github-action@v3.1.1
+#       with:
+#         step: restore
+
+      - name: Cache our Maven dependencies
+        uses: actions/cache@v1
         with:
-          step: restore
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       - name: Run the Maven build
         run: |
@@ -276,11 +277,11 @@ jobs:
             ./mvnw --batch-mode install
           popd
 
-      # https://github.com/marketplace/actions/maven-cache
-      - name: Restore our Maven cache
-        uses: skjolber/maven-cache-github-action@v3.1.1
-        with:
-          step: save
+#     # https://github.com/marketplace/actions/maven-cache
+#     - name: Restore our Maven cache
+#       uses: skjolber/maven-cache-github-action@v3.1.1
+#       with:
+#         step: save
 
       - name: Upload the client JAR
         uses: actions/upload-artifact@v4
@@ -340,11 +341,20 @@ jobs:
           EOF
           popd
 
-      # https://github.com/marketplace/actions/maven-cache
-      - name: Restore our Maven cache
-        uses: skjolber/maven-cache-github-action@v3.1.1
+#     # https://github.com/marketplace/actions/maven-cache
+#     - name: Restore our Maven cache
+#       uses: skjolber/maven-cache-github-action@v3.1.1
+#       with:
+#         step: restore
+
+      # https://github.com/actions/cache/blob/main/examples.md#java---maven
+      - name: Cache our Maven dependencies
+        uses: actions/cache@v5
         with:
-          step: restore
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
       - name: Run the Maven build
         run: |
@@ -352,11 +362,11 @@ jobs:
             ./mvnw --batch-mode install
           popd
 
-      # https://github.com/marketplace/actions/maven-cache
-      - name: Save our Maven cache
-        uses: skjolber/maven-cache-github-action@v3.1.1
-        with:
-          step: save
+#     # https://github.com/marketplace/actions/maven-cache
+#     - name: Save our Maven cache
+#       uses: skjolber/maven-cache-github-action@v3.1.1
+#       with:
+#         step: save
 
       - name: Upload the client JAR
         uses: actions/upload-artifact@v4
