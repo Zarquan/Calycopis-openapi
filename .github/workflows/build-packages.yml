@@ -385,7 +385,7 @@ jobs:
 
       - name: Publish the JAR to the GitHub Maven repository.
         run: |
-          pushd codegen/java/client
+          pushd codegen/java/spring
             ./mvnw --batch-mode deploy
           popd
         env:
