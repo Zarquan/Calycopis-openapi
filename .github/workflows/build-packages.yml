@@ -384,6 +384,7 @@ jobs:
           path: 'codegen/java/spring/target/calycopis-spring-${{env.schemaversion}}-SNAPSHOT.jar'
 
       - name: Publish the JAR to the GitHub Maven repository.
+        if: ${{ github.repository == 'ivoa/Calycopis-schema' }}
         run: |
           pushd codegen/java/spring
             ./mvnw --batch-mode deploy
