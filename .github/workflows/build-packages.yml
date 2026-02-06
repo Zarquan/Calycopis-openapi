@@ -50,14 +50,6 @@ jobs:
       contents: read
       packages: write
 
-#   env:
-#     schemapath:    'v1.0'
-#     schemaversion: '1.0.2'
-#     jarversion:    '1.0.2-SNAPSHOT'
-#
-#     openapiGeneratorName:    'openapi-generator-cli'
-#     openapiGeneratorVersion: '7.18.0'
-
     steps:
 
       # https://github.com/actions/checkout
@@ -124,13 +116,6 @@ jobs:
       contents: read
       packages: write
 
-#   env:
-#     schemapath:    'v1.0'
-#     schemaversion: '1.0.2'
-#
-#     openapiGeneratorName:    'openapi-generator-cli'
-#     openapiGeneratorVersion: '7.18.0'
-
     steps:
 
       # https://github.com/actions/checkout
@@ -178,10 +163,6 @@ jobs:
           artifactId: 'openapi-generator-cli'
           version:    '${{env.openapiGeneratorVersion}}'
           extension:  'jar'
-
-#     - name: Check file path
-#       run: |
-#         echo "File has been downloaded to [${{steps.download-openapi-generator.outputs.file}}]"
 
       - name: Create the Python build directory
         run: |
@@ -232,10 +213,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-
-#   env:
-#     schemapath:    'v1.0'
-#     schemaversion: '1.0.2'
 
     steps:
 
@@ -300,7 +277,7 @@ jobs:
           popd
 
 #     # https://github.com/marketplace/actions/maven-cache
-#     - name: Restore our Maven cache
+#     - name: Save our Maven cache
 #       uses: skjolber/maven-cache-github-action@v3.1.1
 #       with:
 #         step: save
@@ -309,7 +286,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: 'calycopis-java-client'
-          path: 'codegen/java/client/target/calycopis-client-${{env.javabuildversion}}-SNAPSHOT.jar'
+          path: 'codegen/java/client/target/calycopis-client-${{env.javabuildversion}}.jar'
 
       - name: Publish the JAR to the GitHub Maven repository.
         if: ${{ github.repository == 'ivoa/Calycopis-schema' }}
@@ -328,10 +305,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-
-#   env:
-#     schemapath:    'v1.0'
-#     schemaversion: '1.0.2'
 
     steps:
 
