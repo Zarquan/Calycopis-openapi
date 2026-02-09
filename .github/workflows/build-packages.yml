@@ -306,7 +306,7 @@ jobs:
           path: 'codegen/java/client/target/calycopis-client-${{env.pomversion}}.jar'
 
       - name: Publish the JAR to the GitHub Maven repository.
-        if: ${{ (github.repository == 'ivoa/Calycopis-schema') && (github.event.action == 'push') }}
+        if: ${{ (github.repository == 'ivoa/Calycopis-schema') && (github.event_name == 'push') }}
         run: |
           pushd codegen/java/client
             ./mvnw --batch-mode deploy
@@ -409,7 +409,7 @@ jobs:
 
       - name: Check the GitHub event action
         run: |
-            echo "GitHub action [${{github.event.action}}]"
+            echo "GitHub action [${{github.event_name}}]"
 
       - name: Upload the JAR as a GitHub artifact
         uses: actions/upload-artifact@v4
@@ -418,7 +418,7 @@ jobs:
           path: 'codegen/java/spring/target/calycopis-spring-${{env.pomversion}}.jar'
 
       - name: Publish the JAR to the GitHub Maven repository.
-        if: ${{ (github.repository == 'ivoa/Calycopis-schema') && (github.event.action == 'push') }}
+        if: ${{ (github.repository == 'ivoa/Calycopis-schema') && (github.event_name == 'push') }}
         run: |
           pushd codegen/java/spring
             ./mvnw --batch-mode deploy
