@@ -1,0 +1,79 @@
+#
+# <meta:header>
+#   <meta:licence>
+#     Copyright (c) 2026, Manchester (http://www.manchester.ac.uk/)
+#
+#     This information is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     This information is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this software. If not, see <http://www.gnu.org/licenses/>.
+#   </meta:licence>
+# </meta:header>
+#
+#zrq-notes-indent
+#
+# AIMetrics: []
+#
+
+    Target:
+
+        Fix the GitHub workflow
+
+    Result:
+
+        Work in progress ...
+
+# -----------------------------------------------------
+
+    Merging a pull request triggers a Maven deploy to the GitHub package repository.
+
+    This used to work, but now fails with a 401 error.
+
+--START--
+....
+Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:3.1.4:deploy (default-deploy) on project calycopis-spring:
+Failed to retrieve remote metadata net.ivoa.calycopis:calycopis-spring:1.0.3-SNAPSHOT/maven-metadata.xml:
+Could not transfer metadata net.ivoa.calycopis:calycopis-spring:1.0.3-SNAPSHOT/maven-metadata.xml from/to github-ivoa (https://maven.pkg.github.com/ivoa/Calycopis-schema):
+status code: 401, reason phrase: Unauthorized (401)
+....
+--END--
+
+    #
+    # It should be generating a new auth token each time we run the workflow.
+    # I didn't think I had changed anything in that part of the workflow.
+    # .. but the deploy is only triggered when we merge a branch.
+    #
+
+# -----------------------------------------------------
+
+    branchname=github-workflows
+    newbranch=$(date '+%Y%m%d')-zrq-${branchname:?}
+
+    source "${HOME:?}/calycopis.env"
+    pushd "${TREBULA_CODE:?}"
+
+        git checkout main
+
+        git checkout -b "${newbranch:?}"
+
+        git add notes
+
+        git commit -m "Gardening ...."
+
+        git push --set-upstream origin "${newbranch:?}"
+
+    popd
+
+
+
+
+
+
