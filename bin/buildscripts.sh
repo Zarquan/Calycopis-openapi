@@ -1,47 +1,128 @@
+#
+# <meta:header>
+#   <meta:licence>
+#     Copyright (c) 2026, Manchester University (http://www.manchester.ac.uk/)
+#
+#     This work is made available under the Creative Commons
+#     Attribution-ShareAlike 4.0 International licence.
+#
+#     For details of the licence terms see:
+#     https://creativecommons.org/licenses/by-sa/4.0/
+#   </meta:licence>
+# </meta:header>
+#
+# AIMetrics: []
+#
+# A shell script to generate and build packages from the schema.
+#
 
+schemapath=v1.0
+schemaversion=1.0.3
+
+openapiGeneratorName=openapi-generator-cli
+openapiGeneratorVersion=7.18.0
+openapiGeneratorFileName=${openapiGeneratorName}-${openapiGeneratorVersion}.jar
+openapiGeneratorPath=/opt/openapi-generator
+openapiGeneratorFullPath=${openapiGeneratorPath}/${openapiGeneratorFileName}
+
+#
+# This script assumes that the schema project has been mounted
+# at /trebula in the container filesystem.
+#
+# This script assumes that the schema processor has been mounted
+# as a git submodule at /trebula/isobeon in the container filesystem.
+#
 
 buildschema()
     {
+    local clean=${1-false}
+
     source /trebula/project.properties
 
-    rm -rf /trebula/build
-    mkdir --parents /trebula/build
+    local schemainput=/trebula/schema/${schemapath:?}/execution-broker.yaml
+    local schemaoutput=/trebula/schema/build/execution-broker-${schemaversion:?}.yaml
 
-    /tmp/venv/bin/python \
-        /isobeon/schema-processor.py \
-            "/trebula/schema/${schemapath:?}/execution-broker.yaml" \
-            "/trebula/build/execution-broker-${schemaversion:?}.yaml"
+    echo "Clean  [${clean}]"
+    echo "Input  [${schemainput}]"
+    echo "Output [${schemaoutput}]"
+
+    if [ ${clean} ]
+    then
+        rm -rf \
+            "$(dirname ${schemaoutput})"
+    fi
+
+    if [ ! -e "$(dirname ${schemaoutput})" ]
+    then
+        mkdir --parents \
+            "$(dirname ${schemaoutput})"
+    fi
+
+    if [ ! -e "${schemaoutput:?}" ]
+    then
+        python \
+            /trebula/isobeon/schema-processor.py \
+                "${schemainput:?}" \
+                "${schemaoutput}"
+    fi
+
+    }
+
+installgenerator()
+    {
+    mkdir --parents \
+        "${openapiGeneratorPath}"
+
+    if [ ! -e "${openapiGeneratorFullPath}" ]
+    then
+        wget \
+            https://repo1.maven.org/maven2/org/openapitools/${openapiGeneratorName}/${openapiGeneratorVersion}/${openapiGeneratorFileName} \
+             --output-document "${openapiGeneratorFullPath}"
+    fi
+
     }
 
 buildpythonclient()
     {
     source /trebula/project.properties
 
-    buildschema
+    # buildschema
+    # installgenerator
 
-    schemafile=/trebula/build/execution-broker-${schemaversion:?}.yaml
-    buildpath=/trebula/python/client/build
+    local schemafile=/trebula/schema/build/execution-broker-${schemaversion:?}.yaml
+    local buildpath=/trebula/codegen/python/client/build
 
     rm -rf \
         "${buildpath:?}"
     mkdir --parents \
         "${buildpath:?}"
 
-    java -jar "${generatorFullPath}" \
+    java -jar "${openapiGeneratorFullPath}" \
         generate \
         --generator-name python \
         --input-spec "${schemafile:?}" \
         --output     "${buildpath:?}" \
-        --package-name "calycopis_openapi_client" \
+        --additional-properties "projectName=calycopis-client" \
+        --additional-properties "packageName=calycopis_client" \
         --additional-properties "packageUrl=https://github.com/ivoa/Calycopis-schema" \
         --additional-properties "packageVersion=${schemaversion:?}" \
-        --additional-properties "projectName=calycopis-openapi-client"
 
-    /tmp/venv/bin/python \
+#       --additional-properties "modelNamePrefix=Ivoa"
+#       --additional-properties "modelPackage=models"
+#       --additional-properties "apiPackage=api"
+
+    #
+    # Add the extra wrappers
+    cp -r /trebula/codegen/python/client/wrappers \
+        "${buildpath}/calycopis_client/wrappers"
+
+    pip install \
+        twine \
+        build
+
+    python \
         -m build \
             "${buildpath:?}"
-
-
 
     }
 
@@ -49,14 +130,12 @@ buildjavaclient()
     {
     source /trebula/project.properties
 
-    buildschema
+    # buildschema
 
     pushd /trebula/codegen/java/client/
 
-        rm -rf build
-        mkdir --parents build
-        cat > build/build.properties << EOF
-trebula.schema.file=/trebula/build/execution-broker-${schemaversion:?}.yaml
+        cat > build.properties << EOF
+calycopis.schema.file=/trebula/schema/build/execution-broker-${schemaversion:?}.yaml
 EOF
 
         ./mvnw clean install
@@ -69,14 +148,12 @@ buildjavaspring()
     {
     source /trebula/project.properties
 
-    buildschema
+    # buildschema
 
     pushd /trebula/codegen/java/spring/
 
-        rm -rf build
-        mkdir --parents build
-        cat > build/build.properties << EOF
-trebula.schema.file=/trebula/build/execution-broker-${schemaversion:?}.yaml
+        cat > build.properties << EOF
+calycopis.schema.file=/trebula/schema/build/execution-broker-${schemaversion:?}.yaml
 EOF
 
         ./mvnw clean install
