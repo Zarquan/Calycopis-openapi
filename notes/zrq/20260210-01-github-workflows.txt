@@ -238,7 +238,7 @@ status code: 401, reason phrase: Unauthorized (401)
 
         git push
 
-        git checkout -d "${newbranch:?}"
+        git branch -d "${newbranch:?}"
 
     popd
 
