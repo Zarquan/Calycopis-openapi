@@ -62,8 +62,6 @@ components:
               $ref: '#/components/schemas/SimpleComputeCores'
             memory:
               $ref: '#/components/schemas/SimpleComputeMemory'
-            volumes:
-              $ref: '../../components.yaml#/components/schemas/AbstractVolumeMountList'
 
     SimpleComputeCores:
       description: >-

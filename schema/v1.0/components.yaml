@@ -231,6 +231,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/AbstractComponent'
         - $ref: '#/components/schemas/LifecycleComponent'
+        - type: object
+          properties:
+            volumes:
+              $ref: '#/components/schemas/AbstractVolumeMountList'
 
 # abstract-volume-mount.yaml
 
@@ -244,7 +248,7 @@ components:
       discriminator:
         propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/volume/simple-volume-mount-1.0": './types/volume/simple-volume-mount-1.0.yaml#/components/schemas/SimpleVolumeMount'
+          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/volume/simple-volume-mount-1.0":    './types/volume/simple-volume-mount-1.0.yaml#/components/schemas/SimpleVolumeMount'
       allOf:
         - $ref: '#/components/schemas/AbstractComponent'
 
