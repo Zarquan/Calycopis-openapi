@@ -45,13 +45,12 @@ components:
       description: >-
         A simple volume mount.
       allOf:
-        # $ref: '../../openapi.yaml#AbstractVolumeMount'
         - $ref: '../../components.yaml#/components/schemas/AbstractVolumeMount'
         - type: object
           properties:
             path:
               description: >
-                The filesystem mount point.
+                The filesystem path.
               type: string
             mode:
               description: >
@@ -60,22 +59,8 @@ components:
               enum:
                 - READONLY
                 - READWRITE
-            cardinality:
+            resource:
               description: >
-                If cardinality is set to SINGLE, then this volume-mount will mount a single resource at the location set by the path.
-                If cardinality is set to CONTAINER, then this volume-mount will create a directory at the location set by the path,
-                and mount the resources within that directory.
+                The resource to mount.
               type: string
-              enum:
-                - SINGLE
-                - CONTAINER
-            resources:
-              description: >
-                A list of the data resources to mount in this volume.
-                If cardinality is set to SINGLE then this list should only contain one resource.
-                If cardinality is set to SINGLE and this list has more than one resource, then it should fail validation.
-                If cardinality is set to CONTAINER then this list may contain more than one resource.
-              type: array
-              items:
-                type: string
 
