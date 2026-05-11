@@ -44,8 +44,8 @@
 		<relativePath/>
 	</parent>
 	<groupId>net.ivoa.calycopis</groupId>
-	<artifactId>calycopis-spring</artifactId>
-	<version>1.0.4-SNAPSHOT</version>
+	<artifactId>calycopis-schema-spring</artifactId>
+	<version>1.0.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Calycopis Spring Boot</name>
 	<description>IVOA ExecutionBroker Spring Boot classes generated from the OpenAPI schema</description>
@@ -55,9 +55,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <calycopis.package>net.ivoa.calycopis.spring</calycopis.package>
+        <calycopis.package>net.ivoa.calycopis.schema.spring</calycopis.package>
         <calycopis.model.prefix>Ivoa</calycopis.model.prefix>
-        <calycopis.schema.file>${project.basedir}/../../../schema/build/execution-broker-1.0.4.yaml</calycopis.schema.file>
+        <calycopis.schema.file>${project.basedir}/../../../schema/build/execution-broker-1.0.5.yaml</calycopis.schema.file>
+        <openapi.generator.version>7.22.0</openapi.generator.version>
 	</properties>
 
     <distributionManagement>
@@ -199,7 +200,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.14.0</version>
+                <version>${openapi.generator.version}</version>
                 <executions>
                     <execution>
                         <goals>

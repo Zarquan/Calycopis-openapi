@@ -36,10 +36,10 @@ name: Calycopis builder
 
 env:
   schemapath: 'v1.0'
-  schemaversion: '1.0.4'
+  schemaversion: '1.0.5'
 
   openapiGeneratorName: 'openapi-generator-cli'
-  openapiGeneratorVersion: '7.18.0'
+  openapiGeneratorVersion: '7.22.0'
 
 on:
   push:
@@ -110,7 +110,7 @@ jobs:
       - name: Upload the schema file
         uses: actions/upload-artifact@v4
         with:
-          name: 'calycopis-schema'
+          name: 'calycopis-schema-schema'
           path: 'schema/build/'
 
   build-python-client:
@@ -149,7 +149,7 @@ jobs:
       - name: Download the schema result
         uses: actions/download-artifact@v4
         with:
-          name: 'calycopis-schema'
+          name: 'calycopis-schema-schema'
           path: 'schema/build/'
 
       - name: Setup Java
@@ -181,8 +181,8 @@ jobs:
             --generator-name python \
             --input-spec 'schema/build/execution-broker-${{env.schemaversion}}.yaml' \
             --output     'codegen/python/client/build' \
-            --additional-properties 'projectName=calycopis-client' \
-            --additional-properties 'packageName=calycopis_client' \
+            --additional-properties 'projectName=calycopis-schema-client' \
+            --additional-properties 'packageName=calycopis_schema_client' \
             --additional-properties 'packageUrl=https://github.com/ivoa/Calycopis-schema' \
             --additional-properties 'packageVersion=${{env.schemaversion}}'
 
@@ -207,8 +207,8 @@ jobs:
       - name: Upload the distribution wheel
         uses: actions/upload-artifact@v4
         with:
-          name: 'calycopis-python-client'
-          path: 'codegen/python/client/build/dist/calycopis_client-${{env.schemaversion}}-py3-none-any.whl'
+          name: 'calycopis-schema-python-client'
+          path: 'codegen/python/client/build/dist/calycopis_schema_client-${{env.schemaversion}}-py3-none-any.whl'
 
   build-java-client:
 
@@ -241,7 +241,7 @@ jobs:
       - name: Download the schema result
         uses: actions/download-artifact@v4
         with:
-          name: 'calycopis-schema'
+          name: 'calycopis-schema-schema'
           path: '/tmp'
 
       - name: Setup Java
@@ -304,8 +304,8 @@ jobs:
       - name: Upload the JAR as a GitHub artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 'calycopis-java-client'
-          path: 'codegen/java/client/target/calycopis-client-${{env.pomversion}}.jar'
+          name: 'calycopis-schema-java-client'
+          path: 'codegen/java/client/target/calycopis-schema-client-${{env.pomversion}}.jar'
 
       - name: Publish the JAR to the GitHub Maven repository.
         if: ${{ (github.repository == 'ivoa/Calycopis-schema') && (github.event_name == 'push') }}
@@ -349,7 +349,7 @@ jobs:
       - name: Download the schema result
         uses: actions/download-artifact@v4
         with:
-          name: 'calycopis-schema'
+          name: 'calycopis-schema-schema'
           path: '/tmp'
 
       - name: Setup Java
@@ -412,8 +412,8 @@ jobs:
       - name: Upload the JAR as a GitHub artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 'calycopis-java-spring'
-          path: 'codegen/java/spring/target/calycopis-spring-${{env.pomversion}}.jar'
+          name: 'calycopis-schema-java-spring'
+          path: 'codegen/java/spring/target/calycopis-schema-spring-${{env.pomversion}}.jar'
 
       - name: Publish the JAR to the GitHub Maven repository.
         if: ${{ (github.repository == 'ivoa/Calycopis-schema') && (github.event_name == 'push') }}

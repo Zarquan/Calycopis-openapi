@@ -28,10 +28,10 @@
 #
 
 schemapath="v1.0"
-schemaversion="1.0.4"
+schemaversion="1.0.5"
 
 openapiGeneratorName="openapi-generator-cli"
-openapiGeneratorVersion="7.18.0"
+openapiGeneratorVersion="7.22.0"
 openapiGeneratorFileName="${openapiGeneratorName}-${openapiGeneratorVersion}.jar"
 openapiGeneratorPath="/opt/openapi-generator"
 openapiGeneratorFullPath="${openapiGeneratorPath}/${openapiGeneratorFileName}"
@@ -102,8 +102,8 @@ buildpythonclient()
         --generator-name python \
         --input-spec "${schemafile:?}" \
         --output     "${buildpath:?}" \
-        --additional-properties "projectName=calycopis-client" \
-        --additional-properties "packageName=calycopis_client" \
+        --additional-properties "projectName=calycopis-schema-client" \
+        --additional-properties "packageName=calycopis_schema_client" \
         --additional-properties "packageUrl=https://github.com/ivoa/Calycopis-schema" \
         --additional-properties "packageVersion=${schemaversion:?}" \
 
@@ -114,7 +114,7 @@ buildpythonclient()
     #
     # Add the extra wrappers
     cp -r "codegen/python/client/wrappers" \
-        "${buildpath}/calycopis_client/wrappers"
+        "${buildpath}/calycopis_schema_client/wrappers"
 
     pip install \
         twine \

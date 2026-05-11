@@ -38,8 +38,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ivoa.calycopis</groupId>
-	<artifactId>calycopis-client</artifactId>
-	<version>1.0.4-SNAPSHOT</version>
+	<artifactId>calycopis-schema-client</artifactId>
+	<version>1.0.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Calycopis Java client</name>
 	<description>IVOA ExecutionBroker Java client generated from the OpenAPI schema</description>
@@ -49,9 +49,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <calycopis.package>net.ivoa.calycopis.client</calycopis.package>
+        <calycopis.package>net.ivoa.calycopis.schema.client</calycopis.package>
         <calycopis.model.prefix>Ivoa</calycopis.model.prefix>
-        <calycopis.schema.file>${project.basedir}/../../../schema/build/execution-broker-1.0.4.yaml</calycopis.schema.file>
+        <calycopis.schema.file>${project.basedir}/../../../schema/build/execution-broker-1.0.5.yaml</calycopis.schema.file>
+        <openapi.generator.version>7.22.0</openapi.generator.version>
 	</properties>
 
     <distributionManagement>
@@ -166,7 +167,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.14.0</version>
+                <version>${openapi.generator.version}</version>
                 <executions>
                     <execution>
                         <goals>
