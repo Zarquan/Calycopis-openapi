@@ -17,5 +17,5 @@
 #
 
 schemasource:  schema/v1.0/execution-broker.yaml
-schemaversion: 1.0.2
+schemaversion: 1.0.5
 

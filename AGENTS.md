@@ -7,7 +7,7 @@ Data model and code generation for the Calycopis Execution Broker.
 * This project defines the OpenAPI schema for the IVOA Execution Broker service and generates client and server packages from it.
 * The schema is defined as a set of YAML files under `schema/v1.0/`, with `execution-broker.yaml` as the top-level entry point.
 * A pre-processor (isobeon) resolves `$ref` references and merges the multi-file schema into a single output file used by code generators.
-* Code is generated for three targets: a Java Spring Boot server library (`calycopis-spring`), a Java client library (`calycopis-client`), and a Python client library (`calycopis_client`).
+* Code is generated for three targets: a Java Spring Boot server library (`calycopis-schema-spring`), a Java client library (`calycopis-schema-client`), and a Python client library (`calycopis_schema_client`).
 
 ## Project structure
 
@@ -35,7 +35,7 @@ Data model and code generation for the Calycopis Execution Broker.
 * **Java 21** (for the Maven-based code generators)
 * **Maven** (provided via `mvnw` wrapper in each Java codegen project)
 * **pip**, **build**, and **twine** (for building the Python package)
-* **OpenAPI Generator CLI 7.18.0** (downloaded automatically by `installgenerator`)
+* **OpenAPI Generator CLI 7.22.0** (downloaded automatically by `installgenerator`)
 
 ## Build process
 
@@ -57,7 +57,7 @@ pip install -r isobeon/requirements.txt
 ### Step 2: Process the schema
 
 The `buildschema` function runs the isobeon pre-processor to merge the multi-file
-schema into a single YAML file at `schema/build/execution-broker-1.0.4.yaml`.
+schema into a single YAML file at `schema/build/execution-broker-1.0.5.yaml`.
 
 ```
 buildschema
@@ -69,7 +69,7 @@ This is equivalent to:
 mkdir -p schema/build
 python isobeon/schema-processor.py \
     schema/v1.0/execution-broker.yaml \
-    schema/build/execution-broker-1.0.4.yaml
+    schema/build/execution-broker-1.0.5.yaml
 ```
 
 Pass `true` to clean the build directory first:
@@ -92,15 +92,15 @@ This is equivalent to:
 ```
 mkdir -p /opt/openapi-generator
 wget \
-    https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.18.0/openapi-generator-cli-7.18.0.jar \
-    --output-document /opt/openapi-generator/openapi-generator-cli-7.18.0.jar
+    https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.22.0/openapi-generator-cli-7.22.0.jar \
+    --output-document /opt/openapi-generator/openapi-generator-cli-7.22.0.jar
 ```
 
 ### Step 4: Build and install the Java Spring server package
 
-The `buildjavaspring` function builds and installs the `calycopis-spring` Maven
+The `buildjavaspring` function builds and installs the `calycopis-schema-spring` Maven
 artifact into the local Maven repository. The Calycopis-broker project depends on
-this artifact (`net.ivoa.calycopis:calycopis-spring:1.0.4-SNAPSHOT`).
+this artifact (`net.ivoa.calycopis:calycopis-schema-spring:1.0.5-SNAPSHOT`).
 
 The Maven POM uses the `openapi-generator-maven-plugin` to generate classes from
 the processed schema at build time, so Step 2 must be completed first.
@@ -122,7 +122,7 @@ Generated sources are written to:
 
 ### Step 5: Build and install the Java client package
 
-The `buildjavaclient` function builds and installs the `calycopis-client` Maven
+The `buildjavaclient` function builds and installs the `calycopis-schema-client` Maven
 artifact into the local Maven repository.
 
 ```
@@ -153,18 +153,18 @@ This is equivalent to:
 rm -rf codegen/python/client/build
 mkdir -p codegen/python/client/build
 
-java -jar /opt/openapi-generator/openapi-generator-cli-7.18.0.jar \
+java -jar /opt/openapi-generator/openapi-generator-cli-7.22.0.jar \
     generate \
     --generator-name python \
-    --input-spec schema/build/execution-broker-1.0.4.yaml \
+    --input-spec schema/build/execution-broker-1.0.5.yaml \
     --output codegen/python/client/build \
-    --additional-properties "projectName=calycopis-client" \
-    --additional-properties "packageName=calycopis_client" \
+    --additional-properties "projectName=calycopis-schema-client" \
+    --additional-properties "packageName=calycopis_schema_client" \
     --additional-properties "packageUrl=https://github.com/ivoa/Calycopis-schema" \
-    --additional-properties "packageVersion=1.0.4"
+    --additional-properties "packageVersion=1.0.5"
 
 cp -r codegen/python/client/wrappers \
-    codegen/python/client/build/calycopis_client/wrappers
+    codegen/python/client/build/calycopis_schema_client/wrappers
 
 pip install twine build
 python -m build codegen/python/client/build
@@ -195,36 +195,36 @@ pip install --editable codegen/python/client/build
 
 ## Schema version
 
-The current schema version is `1.0.4`. This version string appears in:
+The current schema version is `1.0.5`. This version string appears in:
 
 * `bin/buildscripts.sh` (`schemaversion` variable)
 * `project.properties`
-* The Maven POM files (`<version>1.0.4-SNAPSHOT</version>`)
+* The Maven POM files (`<version>1.0.5-SNAPSHOT</version>`)
 * The generated Python package (`packageVersion`)
-* The processed schema output filename (`execution-broker-1.0.4.yaml`)
+* The processed schema output filename (`execution-broker-1.0.5.yaml`)
 
 ## Code generation details
 
-### Java Spring server (`calycopis-spring`)
+### Java Spring server (`calycopis-schema-spring`)
 
 * Generator: `openapi-generator-maven-plugin` v7.14.0 (embedded in Maven POM)
 * Model name prefix: `Ivoa` (all generated model classes are prefixed, e.g. `IvoaSimpleComputeResource`)
-* API package: `net.ivoa.calycopis.spring.api`
-* Model package: `net.ivoa.calycopis.spring.model`
+* API package: `net.ivoa.calycopis.schema.spring.api`
+* Model package: `net.ivoa.calycopis.schema.spring.model`
 * Uses the `delegatePattern` for Spring controller delegation
 * Date mappings: `DateTime` → `java.time.Instant`, `Date` → `java.util.Date`
 
-### Java client (`calycopis-client`)
+### Java client (`calycopis-schema-client`)
 
 * Generator: `openapi-generator-maven-plugin` (embedded in Maven POM)
 * Model name prefix: `Ivoa`
-* API package: `net.ivoa.calycopis.client.api`
-* Model package: `net.ivoa.calycopis.client.model`
+* API package: `net.ivoa.calycopis.schema.client.api`
+* Model package: `net.ivoa.calycopis.schema.client.model`
 
-### Python client (`calycopis_client`)
+### Python client (`calycopis_schema_client`)
 
-* Generator: OpenAPI Generator CLI 7.18.0 (standalone jar)
-* Package name: `calycopis_client`
-* Includes a hand-written wrapper layer at `calycopis_client/wrappers/` providing
+* Generator: OpenAPI Generator CLI 7.22.0 (standalone jar)
+* Package name: `calycopis_schema_client`
+* Includes a hand-written wrapper layer at `calycopis_schema_client/wrappers/` providing
   a higher-level `ExecutionBrokerClient` class for submitting offer-set requests,
   polling session phases, and updating sessions.

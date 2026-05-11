@@ -37,9 +37,9 @@ from time import sleep
 from typing import Iterable, Optional, Set, Union
 from uuid import UUID
 
-from calycopis_client import ApiClient, ApiResponse, Configuration
-from calycopis_client.api import DefaultApi
-from calycopis_client.models import (
+from calycopis_schema_client import ApiClient, ApiResponse, Configuration
+from calycopis_schema_client.api import DefaultApi
+from calycopis_schema_client.models import (
     ExecutionRequest,
     OfferSetResponse,
     AbstractExecutionSession,
@@ -49,7 +49,7 @@ from calycopis_client.models import (
 
 class ExecutionBrokerClient:
     """
-    High-level convenience wrapper around the generated calycopis_client.
+    High-level convenience wrapper around the generated calycopis_schema_client.
 
     This focuses on the common testing flows:
     - submitting an execution offer-set request
