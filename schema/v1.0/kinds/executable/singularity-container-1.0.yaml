@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: IVOA ExecutionBroker log messages
+  title: Singularity container
   version: "1.0"
-  summary: IVOA ExecutionBroker SingularityContainer
+  summary: A Singularity container
   description: >-
-    OpenAPI schema for a Singularity container in IVOA ExecutionBroker
+    Metadata describing a Singularity container.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan

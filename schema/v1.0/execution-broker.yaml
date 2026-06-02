@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: IVOA ExecutionBroker
+  title: IVOA ExecutionBroker web-service API
   version: "1.0"
-  summary: IVOA ExecutionBroker interface
+  summary: IVOA ExecutionBroker web-service API
   description: >-
-    IVOA ExecutionBroker interface
+    OpenAPI schema for the IVOA ExecutionBroker web-service.
   contact:
     name:  Dave Morris
     email: openapi.dev@dm92.uk
@@ -40,9 +40,9 @@ servers:
   - url: http://localhost:8080
     description: Localhost development
 paths:
-  /offersets:
+  /requests:
     post:
-      operationId: OfferSetPost
+      operationId: ExecutionRequest
       requestBody:
         content:
           application/json:
@@ -80,38 +80,9 @@ paths:
               schema:
                 $ref: './components.yaml#/components/schemas/OfferSetResponse'
 
-  /offersets/{uuid}:
-    get:
-      operationId: OfferSetGet
-      parameters:
-        - name: uuid
-          in: path
-          description: >-
-            The UUID identifier of the OfferSet.
-          required: true
-          schema:
-            type: string
-            format: uuid
-          style: simple
-      # TODO Errors return error codes and ErrorResponse.
-      responses:
-        "200":
-          description: >-
-            The set of responses for each content type.
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml#/components/schemas/OfferSetResponse'
-            application/xml:
-              schema:
-                $ref: './components.yaml#/components/schemas/OfferSetResponse'
-            application/yaml:
-              schema:
-                $ref: './components.yaml#/components/schemas/OfferSetResponse'
-
-  /sessions:
+  /direct:
     post:
-      operationId: DirectExecutionPost
+      operationId: ExecutionDirect
       requestBody:
         description: >-
           A direct request to execute an execution without going through the offers process.
@@ -165,9 +136,38 @@ paths:
               schema:
                 $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 
+  /offersets/{uuid}:
+    get:
+      operationId: OfferSetSelect
+      parameters:
+        - name: uuid
+          in: path
+          description: >-
+            The UUID identifier of the OfferSet.
+          required: true
+          schema:
+            type: string
+            format: uuid
+          style: simple
+      # TODO Errors return error codes and ErrorResponse.
+      responses:
+        "200":
+          description: >-
+            The set of responses for each content type.
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml#/components/schemas/OfferSetResponse'
+            application/xml:
+              schema:
+                $ref: './components.yaml#/components/schemas/OfferSetResponse'
+            application/yaml:
+              schema:
+                $ref: './components.yaml#/components/schemas/OfferSetResponse'
+
   /sessions/{uuid}:
     get:
-      operationId: ExecutionSessionGet
+      operationId: ExecutionSessionSelect
       parameters:
         - name: uuid
           in: path
@@ -195,7 +195,7 @@ paths:
                 $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 
     post:
-      operationId: ExecutionUpdatePost
+      operationId: ExecutionSessionSelectUpdate
       parameters:
         - name: uuid
           in: path

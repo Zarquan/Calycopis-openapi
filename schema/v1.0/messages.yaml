@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: IVOA ExecutionBroker log messages
+  title: IVOA ExecutionBroker messages
   version: "1.0"
-  summary: IVOA ExecutionBroker log messages
+  summary: IVOA ExecutionBroker messages
   description: >
-    Log messages used in IVOA ExecutionBroker responses
+    Messages used in IVOA ExecutionBroker responses.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan

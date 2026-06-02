@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: IVOA ExecutionBroker Jupyter notebook
+  title: Jupyter notebook
   version: "1.0"
-  summary: IVOA ExecutionBroker Jupyter notebook
+  summary: A Jupyter notebook
   description: >-
-    OpenAPI schema for a Jupyter notebook in IVOA ExecutionBroker
+    Metadata describing a Jupyter notebook.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan

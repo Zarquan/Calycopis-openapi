@@ -34,11 +34,11 @@
 
 openapi: 3.1.0
 info:
-  title: IVOA ExecutionBroker
+  title: IVOA ExecutionBroker components
   version: "1.0"
-  summary: IVOA ExecutionBroker interface
+  summary: IVOA ExecutionBroker components
   description: >-
-    IVOA ExecutionBroker interface
+    Components for the the IVOA ExecutionBroker OpenAPI schema.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan
@@ -93,7 +93,7 @@ components:
           xml:
             name: messages
           items:
-            $ref: './components/messages.yaml#/components/schemas/MessageItem'
+            $ref: './messages.yaml#/components/schemas/MessageItem'
             xml:
               name: message
         options:
@@ -148,7 +148,7 @@ components:
       title: LifecycleDuration
       properties:
         duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+          $ref: './utils.yaml#/components/schemas/ISO8601Duration'
 
     LifecycleStartDurationInstant:
       description: >-
@@ -157,9 +157,9 @@ components:
       title: LifecycleStartDurationInstant
       properties:
         start:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Instant'
+          $ref: './utils.yaml#/components/schemas/ISO8601Instant'
         duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+          $ref: './utils.yaml#/components/schemas/ISO8601Duration'
 
     LifecycleStartDurationInterval:
       description: >-
@@ -168,9 +168,9 @@ components:
       title: LifecycleStartDurationInterval
       properties:
         start:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+          $ref: './utils.yaml#/components/schemas/ISO8601Interval'
         duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+          $ref: './utils.yaml#/components/schemas/ISO8601Duration'
 
     LifecycleDoneDurationInterval:
       description: >-
@@ -179,9 +179,9 @@ components:
       title: LifecycleDoneDurationInterval
       properties:
         done:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+          $ref: './utils.yaml#/components/schemas/ISO8601Interval'
         duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+          $ref: './utils.yaml#/components/schemas/ISO8601Duration'
 
     LifecycleSchedule:
       description: >-
@@ -227,7 +227,7 @@ components:
       discriminator:
         propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/compute/simple-compute-resource-1.0": './types/compute/simple-compute-resource-1.0.yaml#/components/schemas/SimpleComputeResource'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/compute/simple-compute-resource.yaml": './kinds/compute/simple-compute-resource.yaml#/components/schemas/SimpleComputeResource'
       allOf:
         - $ref: '#/components/schemas/AbstractComponent'
         - $ref: '#/components/schemas/LifecycleComponent'
@@ -248,7 +248,7 @@ components:
       discriminator:
         propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/volume/simple-volume-mount-1.0":    './types/volume/simple-volume-mount-1.0.yaml#/components/schemas/SimpleVolumeMount'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/volume/simple-volume-mount.yaml":    './kinds/volume/simple-volume-mount.yaml#/components/schemas/SimpleVolumeMount'
       allOf:
         - $ref: '#/components/schemas/AbstractComponent'
 
@@ -274,7 +274,7 @@ components:
       discriminator:
         propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/storage/simple-storage-resource-1.0": './types/storage/simple-storage-resource-1.0.yaml#/components/schemas/SimpleStorageResource'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/storage/simple-storage-resource.yaml": './kinds/storage/simple-storage-resource.yaml#/components/schemas/SimpleStorageResource'
       allOf:
         - $ref: '#/components/schemas/AbstractComponent'
         - $ref: '#/components/schemas/LifecycleComponent'
@@ -307,11 +307,11 @@ components:
       discriminator:
         propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/simple-data-resource-1.0": './types/data/simple-data-resource-1.0.yaml#/components/schemas/SimpleDataResource'
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/S3-data-resource-1.0":     './types/data/S3-data-resource-1.0.yaml#/components/schemas/S3DataResource'
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/rucio-data-resource-1.0":  './types/data/rucio-data-resource-1.0.yaml#/components/schemas/RucioDataResource'
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/ivoa-data-resource-1.0":   './types/data/ivoa-data-resource-1.0.yaml#/components/schemas/IvoaDataResource'
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/data/skao-data-resource-1.0":   './types/data/skao-data-resource-1.0.yaml#/components/schemas/SkaoDataResource'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/data/simple-data-resource.yaml": './kinds/data/simple-data-resource.yaml#/components/schemas/SimpleDataResource'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/data/S3-data-resource.yaml":     './kinds/data/S3-data-resource.yaml#/components/schemas/S3DataResource'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/data/rucio-data-resource.yaml":  './kinds/data/rucio-data-resource.yaml#/components/schemas/RucioDataResource'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/data/ivoa-data-resource.yaml":   './kinds/data/ivoa-data-resource.yaml#/components/schemas/IvoaDataResource'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/data/skao-data-resource.yaml":   './kinds/data/skao-data-resource.yaml#/components/schemas/SkaoDataResource'
       allOf:
         - $ref: '#/components/schemas/AbstractComponent'
         - $ref: '#/components/schemas/LifecycleComponent'
@@ -341,9 +341,9 @@ components:
       discriminator:
         propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/executable/docker-container-1.0":      './types/executable/docker-container-1.0.yaml#/components/schemas/DockerContainer'
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/executable/singularity-container-1.0": './types/executable/singularity-container-1.0.yaml#/components/schemas/SingularityContainer'
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/executable/jupyter-notebook-1.0":      './types/executable/jupyter-notebook-1.0.yaml#/components/schemas/JupyterNotebook'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/executable/docker-container.yaml":      './kinds/executable/docker-container.yaml#/components/schemas/DockerContainer'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/executable/singularity-container.yaml": './kinds/executable/singularity-container.yaml#/components/schemas/SingularityContainer'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/executable/jupyter-notebook.yaml":      './kinds/executable/jupyter-notebook.yaml#/components/schemas/JupyterNotebook'
       allOf:
         - $ref: '#/components/schemas/AbstractComponent'
         - $ref: '#/components/schemas/LifecycleComponent'
@@ -606,10 +606,10 @@ components:
       discriminator:
         propertyName: kind
         mapping:
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/simple-execution-session-1.0":    '#/components/schemas/SimpleExecutionSession'
-          "https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/scheduled-execution-session-1.0": '#/components/schemas/ScheduledExecutionSession'
-         #"https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/simple-execution-session-1.0":    './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionSession'
-         #"https://www.purl.org/ivoa.net/EB/schema/v1.0/types/session/scheduled-execution-session-1.0": './types/session/scheduled-execution-session-1.0.yaml#/components/schemas/ScheduledExecutionSession'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/session/simple-execution-session.yaml":    '#/components/schemas/SimpleExecutionSession'
+          "https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/session/scheduled-execution-session.yaml": '#/components/schemas/ScheduledExecutionSession'
+         #"https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/session/simple-execution-session.yaml":    './kinds/session/simple-execution-session.yaml#/components/schemas/SimpleExecutionSession'
+         #"https://www.purl.org/ivoa.net/Calycopis-openapi/schema/v1.0/kinds/session/scheduled-execution-session.yaml": './kinds/session/scheduled-execution-session.yaml#/components/schemas/ScheduledExecutionSession'
       allOf:
         - $ref: '#/components/schemas/AbstractComponent'
 
@@ -726,7 +726,7 @@ components:
         A schedule duration.
       properties:
         duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+          $ref: './utils.yaml#/components/schemas/ISO8601Duration'
 
     ScheduleStartDurationInstant:
       type: object
@@ -735,9 +735,9 @@ components:
         A schedule instant and duration.
       properties:
         start:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Instant'
+          $ref: './utils.yaml#/components/schemas/ISO8601Instant'
         duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+          $ref: './utils.yaml#/components/schemas/ISO8601Duration'
 
     ScheduleStartDurationInterval:
       type: object
@@ -746,9 +746,9 @@ components:
         A schedule interval and duration.
       properties:
         start:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+          $ref: './utils.yaml#/components/schemas/ISO8601Interval'
         duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+          $ref: './utils.yaml#/components/schemas/ISO8601Duration'
 
     ScheduleDoneDurationInterval:
       type: object
@@ -757,9 +757,9 @@ components:
         A schedule interval and duration.
       properties:
         done:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+          $ref: './utils.yaml#/components/schemas/ISO8601Interval'
         duration:
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+          $ref: './utils.yaml#/components/schemas/ISO8601Duration'
 
     ScheduledExecutionSchedule:
       type: object
@@ -797,11 +797,11 @@ components:
         duration:
           description: >-
             The requested duration.
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Duration'
+          $ref: './utils.yaml#/components/schemas/ISO8601Duration'
         start:
           description: >-
             The requested start interval.
-          $ref: './components/utils.yaml#/components/schemas/ISO8601Interval'
+          $ref: './utils.yaml#/components/schemas/ISO8601Interval'
 
     RequestedScheduleBlock:
       description: >-
@@ -836,7 +836,7 @@ components:
         name: offers-request
       allOf:
         - $ref: '#/components/schemas/ExecutionRequestComponents'
-       #- $ref: './types/session/simple-execution-session-1.0.yaml#/components/schemas/SimpleExecutionComponents'
+       #- $ref: './kinds/session/simple-execution-session.yaml#/components/schemas/SimpleExecutionComponents'
         - type: object
           properties:
             schedule:

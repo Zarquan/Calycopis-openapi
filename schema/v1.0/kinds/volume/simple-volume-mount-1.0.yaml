@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: IVOA ExecutionBroker volume mounts
+  title: Simple volume mount
   version: "1.0"
-  summary: IVOA ExecutionBroker SimpleVolumeMount
+  summary: A simple volume mount
   description: >-
-    OpenAPI schema for a simple volume mount in IVOA ExecutionBroker
+    Metadata describing a simple volume mount.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan
