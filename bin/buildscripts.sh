@@ -28,7 +28,7 @@
 #
 
 schemapath="v1.0"
-schemaversion="1.0.5"
+schemaversion="1.0.6"
 
 openapiGeneratorName="openapi-generator-cli"
 openapiGeneratorVersion="7.22.0"
