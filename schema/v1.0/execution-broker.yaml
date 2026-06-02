@@ -82,7 +82,7 @@ paths:
 
   /direct:
     post:
-      operationId: ExecutionDirect
+      operationId: DirectExecution
       requestBody:
         description: >-
           A direct request to execute an execution without going through the offers process.
@@ -167,7 +167,7 @@ paths:
 
   /sessions/{uuid}:
     get:
-      operationId: ExecutionSessionSelect
+      operationId: SessionSelect
       parameters:
         - name: uuid
           in: path
@@ -195,7 +195,7 @@ paths:
                 $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 
     post:
-      operationId: ExecutionSessionSelectUpdate
+      operationId: SessionUpdate
       parameters:
         - name: uuid
           in: path
