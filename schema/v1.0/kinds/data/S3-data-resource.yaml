@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: IVOA ExecutionBroker S3 data resource
+  title: Amazon S3 data resource
   version: "1.0"
-  summary: IVOA ExecutionBroker S3 data resource
+  summary: Amazon S3 data resource
   description: >-
-    OpenAPI schema for an IVOA ExecutionBroker S3 data resource
+    Metadata describing an Amazon S3 data resource.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan

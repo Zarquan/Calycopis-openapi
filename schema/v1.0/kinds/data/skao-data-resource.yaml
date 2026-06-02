@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: SkaoDataResource
+  title: SKAO data resource
   version: "1.0"
   summary: A SKAO data resource
   description: >-
-    Metadata describing a SKAO data resource in the data lake.
+    Metadata describing a SKAO data resource in the SKAO data lake.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan
@@ -54,7 +54,7 @@ components:
         - type: object
           properties:
             ivoa:
-              $ref: './ivoa-data-resource-1.0.yaml#/components/schemas/IvoaDataResourceBlock'
+              $ref: './ivoa-data-resource.yaml#/components/schemas/IvoaDataResourceBlock'
             skao:
               $ref: '#/components/schemas/SkaoDataResourceBlock'
 

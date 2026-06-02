@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: IVOA ExecutionBroker simple data resource
+  title: Simple volume mount
   version: "1.0"
-  summary: IVOA ExecutionBroker simple data resource
+  summary: A simple volume mount
   description: >-
-    OpenAPI schema for an IVOA ExecutionBroker simple data resource
+    Metadata describing a simple volume mount.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan
@@ -39,21 +39,28 @@ info:
 components:
   schemas:
 
-    SimpleDataResource:
+    SimpleVolumeMount:
       type: object
-      title: SimpleDataResource
+      title: SimpleVolumeMount
       description: >-
-          A simple downloadable data resource.
+        A simple volume mount.
       allOf:
-        - $ref: '../../components.yaml#/components/schemas/AbstractDataResource'
+        - $ref: '../../components.yaml#/components/schemas/AbstractVolumeMount'
         - type: object
           properties:
-            location:
-              description: >-
-                The URL of the data to import.
+            path:
+              description: >
+                The filesystem path.
               type: string
-# TODO add checksums
-# TODO add a size estimate
-# TODO add download time estimate
-# TODO add status flag ... WAITING|PREPARING|READY|RELEASING|COMPLETED|CANCELLED|FAILED
+            mode:
+              description: >
+                The read-write access mode.
+              type: string
+              enum:
+                - READONLY
+                - READWRITE
+            resource:
+              description: >
+                The resource to mount.
+              type: string
 
