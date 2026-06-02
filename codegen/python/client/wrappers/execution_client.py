@@ -26,13 +26,23 @@
 #       "value": 100,
 #       "units": "%"
 #       }
+#     },
+#     {
+#     "timestamp": "2026-06-02T13:15:00",
+#     "name": "Cursor CLI",
+#     "version": "2026.02.13-41ac335",
+#     "model": "Claude 4.6 Opus (Thinking)",
+#     "contribution": {
+#       "value": 5,
+#       "units": "%"
+#       }
 #     }
 #   ]
 #
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from time import sleep
 from typing import Iterable, Optional, Set, Union
 from uuid import UUID
@@ -97,7 +107,7 @@ class ExecutionBrokerClient:
             - OfferSetResponse loaded via GET /offersets/{uuid} if the server
               responds with 303 and follow_redirect is True.
         """
-        resp: ApiResponse[OfferSetResponse] = self._api.offer_set_post_with_http_info(
+        resp: ApiResponse[OfferSetResponse] = self._api.execution_request_with_http_info(
             offer_set_request
         )
 
@@ -107,14 +117,14 @@ class ExecutionBrokerClient:
         if resp.status_code == 303:
             location = resp.headers.get("Location") if resp.headers else None
             if not location:
-                raise RuntimeError("303 response from offer_set_post without Location header")
+                raise RuntimeError("303 response from execution_request without Location header")
             offerset_uuid = UUID(location.rsplit("/", 1)[-1])
             if not follow_redirect:
                 return offerset_uuid
-            return self._api.offer_set_get(offerset_uuid)
+            return self._api.offer_set_select(offerset_uuid)
 
         raise RuntimeError(
-            f"Unexpected status code from offer_set_post: {resp.status_code}"
+            f"Unexpected status code from execution_request: {resp.status_code}"
         )
 
     # ------------------------------------------------------------------
@@ -135,7 +145,7 @@ class ExecutionBrokerClient:
         Returns:
             AbstractExecutionSession for the newly created session.
         """
-        resp: ApiResponse = self._api.direct_execution_post_with_http_info(
+        resp: ApiResponse = self._api.direct_execution_with_http_info(
             execution_request
         )
 
@@ -143,7 +153,7 @@ class ExecutionBrokerClient:
             location = resp.headers.get("Location") if resp.headers else None
             if not location:
                 raise RuntimeError(
-                    "303 response from direct_execution_post without Location header"
+                    "303 response from direct_execution without Location header"
                 )
             session_uuid = UUID(location.rsplit("/", 1)[-1])
             return self.get_session(session_uuid)
@@ -152,7 +162,7 @@ class ExecutionBrokerClient:
             return resp.data
 
         raise RuntimeError(
-            f"Unexpected status code from direct_execution_post: {resp.status_code}"
+            f"Unexpected status code from direct_execution: {resp.status_code}"
         )
 
     # ------------------------------------------------------------------
@@ -166,7 +176,7 @@ class ExecutionBrokerClient:
         """
         Fetch an execution session by UUID.
         """
-        return self._api.execution_session_get(session_uuid)
+        return self._api.session_select(session_uuid)
 
     def set_session_phase(
         self,
@@ -187,7 +197,7 @@ class ExecutionBrokerClient:
             path=path,
             value=phase.value,
         )
-        return self._api.execution_update_post(session_uuid, update)
+        return self._api.session_update(session_uuid, update)
 
     # ------------------------------------------------------------------
     # Polling helpers
@@ -213,10 +223,10 @@ class ExecutionBrokerClient:
             TimeoutError: If the target phase is not reached in time.
         """
         target_set: Set[SimpleExecutionSessionPhase] = set(target_phases)
-        deadline = datetime.utcnow() + timedelta(seconds=timeout)
+        deadline = datetime.now(timezone.utc) + timedelta(seconds=timeout)
         last: Optional[AbstractExecutionSession] = None
 
-        while datetime.utcnow() < deadline:
+        while datetime.now(timezone.utc) < deadline:
             last = self.get_session(session_uuid)
             phase = getattr(last, "phase", None)
             if phase in target_set:
