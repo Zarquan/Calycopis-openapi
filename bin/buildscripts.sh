@@ -41,7 +41,7 @@ buildschema()
     local clean=${1-false}
 
     local schemainput="schema/${schemapath:?}/execution-broker.yaml"
-    local schemaoutput="schema/build/execution-broker-${schemaversion:?}.yaml"
+    local schemaoutput="build/execution-broker-${schemaversion:?}.yaml"
 
     echo "Clean  [${clean}]"
     echo "Input  [${schemainput}]"
@@ -89,7 +89,7 @@ buildpythonclient()
     # buildschema
     # installgenerator
 
-    local schemafile="schema/build/execution-broker-${schemaversion:?}.yaml"
+    local schemafile="build/execution-broker-${schemaversion:?}.yaml"
     local buildpath="codegen/python/client/build"
 
     rm -rf \
@@ -104,7 +104,7 @@ buildpythonclient()
         --output     "${buildpath:?}" \
         --additional-properties "projectName=calycopis-schema-client" \
         --additional-properties "packageName=calycopis_schema_client" \
-        --additional-properties "packageUrl=https://github.com/ivoa/Calycopis-schema" \
+        --additional-properties "packageUrl=https://github.com/ivoa/Calycopis-openapi" \
         --additional-properties "packageVersion=${schemaversion:?}" \
 
 #       --additional-properties "modelNamePrefix=Ivoa"
