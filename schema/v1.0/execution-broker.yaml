@@ -236,6 +236,35 @@ paths:
               schema:
                 $ref: './components.yaml#/components/schemas/AbstractExecutionSession'
 
-
+  /streams/{uuid}/{stream}:
+    get:
+      operationId: StreamSelect
+      parameters:
+        - name: uuid
+          in: path
+          description: >-
+            The UUID identifier of the container.
+          required: true
+          schema:
+            type: string
+            format: uuid
+          style: simple
+        - name: stream
+          in: path
+          description: >-
+            The name of the stream [stdout|stderr].
+          required: true
+          schema:
+            type: string
+          style: simple
+      responses:
+        "200":
+          description: >-
+            200 OK - With the binary stream content.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
 
 

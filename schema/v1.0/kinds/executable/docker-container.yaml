@@ -78,6 +78,8 @@ components:
               description: >-
                 Details of the network access available to the container.
               $ref: '#/components/schemas/DockerNetworkSpec'
+            streams:
+              $ref: '#/components/schemas/DockerStdioStreams'
 
     DockerImageSpec:
       description: >-
@@ -199,4 +201,31 @@ components:
           description: >-
             A list of public hostnames or IPv4 or IPv6 addresses for the external interface.
             The service will populate this list when it sets up the execution.
+
+    DockerStdioStreams:
+      description: >-
+        The set of IO streams for a container.
+      type: object
+      title: DockerStreamSet
+      properties:
+        stdout:
+          $ref: '#/components/schemas/DockerOutputStream'
+        stderr:
+          $ref: '#/components/schemas/DockerOutputStream'
+
+
+    DockerOutputStream:
+      description: >-
+        Details of an output stream connected to the container.
+      type: object
+      title: DockerIOStream
+      properties:
+        locations:
+          type: array
+          items:
+            type: string
+            format: URL
+          description: >-
+            A list of URLs to access the stream.
+
 
