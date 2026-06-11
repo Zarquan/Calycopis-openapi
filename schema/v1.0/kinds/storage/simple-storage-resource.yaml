@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: IVOA ExecutionBroker log messages
+  title: Simple storage resource
   version: "1.0"
-  summary: IVOA ExecutionBroker SimpleStorageResource
+  summary: A Simple storage resource
   description: >-
-    OpenAPI schema for a simple storage resource in IVOA ExecutionBroker
+    Metadata describing a Simple storage resource.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan

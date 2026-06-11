@@ -24,11 +24,11 @@
 
 openapi: 3.1.0
 info:
-  title: DockerContainer
+  title: Docker container
   version: "1.0"
-  summary: A Docker (OCI) container
+  summary: A Docker container
   description: >-
-    Metadata describing a Docker (OCI) container executable.
+    Metadata describing a Docker container.
   contact:
     name: Dave Morris
     url: https://github.com/Zarquan
@@ -73,7 +73,7 @@ components:
             environment:
               description: >-
                 A name => value map of environment variables to pass to the container.
-              $ref: '../../components/utils.yaml#/components/schemas/NameValueMap'
+              $ref: '../../utils.yaml#/components/schemas/NameValueMap'
             network:
               description: >-
                 Details of the network access available to the container.

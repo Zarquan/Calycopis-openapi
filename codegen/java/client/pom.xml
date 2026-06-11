@@ -39,7 +39,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ivoa.calycopis</groupId>
 	<artifactId>calycopis-schema-client</artifactId>
-	<version>1.0.5-SNAPSHOT</version>
+	<version>1.0.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Calycopis Java client</name>
 	<description>IVOA ExecutionBroker Java client generated from the OpenAPI schema</description>
@@ -51,7 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <calycopis.package>net.ivoa.calycopis.schema.client</calycopis.package>
         <calycopis.model.prefix>Ivoa</calycopis.model.prefix>
-        <calycopis.schema.file>${project.basedir}/../../../schema/build/execution-broker-1.0.5.yaml</calycopis.schema.file>
+        <calycopis.schema.file>${project.basedir}/../../../build/execution-broker-1.0.6.yaml</calycopis.schema.file>
         <openapi.generator.version>7.22.0</openapi.generator.version>
 	</properties>
 
